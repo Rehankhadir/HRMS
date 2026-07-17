@@ -115,14 +115,14 @@ export function TopNav({ onMenuClick }: TopNavProps) {
           <Menu className="h-5 w-5" />
         </button>
 
-        <nav className="hidden sm:flex items-center gap-1.5 text-xs">
+        <nav className="hidden sm:flex items-center gap-2.5 text-base">
           {breadcrumbs.map((crumb, index) => (
-            <div key={crumb.href} className="flex items-center gap-1.5">
-              {index > 0 && <span className="text-gray-300">/</span>}
+            <div key={crumb.href} className="flex items-center gap-2.5">
+              {index > 0 && <span className="text-gray-300 text-sm">/</span>}
               <span
                 className={cn(
                   index === breadcrumbs.length - 1
-                    ? "font-semibold text-gray-900"
+                    ? "font-bold text-gray-900 text-lg"
                     : "text-gray-500 hover:text-gray-700 cursor-pointer"
                 )}
                 onClick={() => index < breadcrumbs.length - 1 && navigate(crumb.href)}
@@ -134,7 +134,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
         </nav>
 
         {/* Mobile Page Title */}
-        <h1 className="sm:hidden text-xs font-semibold text-gray-900">
+        <h1 className="sm:hidden text-base font-bold text-gray-900">
           {breadcrumbs[breadcrumbs.length - 1]?.label || 'Dashboard'}
         </h1>
       </div>

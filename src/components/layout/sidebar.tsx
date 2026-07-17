@@ -399,14 +399,16 @@ export function Sidebar({ collapsed, onToggle, onClose }: SidebarProps) {
       <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4 shrink-0">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-purple-600 text-white font-bold text-xs shadow-lg shadow-primary/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
               Z
             </div>
-            <span className="text-xs font-bold text-gray-900 tracking-tight">Zenith</span>
+            <span className="text-lg font-black tracking-tighter bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent select-none" style={{ fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif", letterSpacing: '-0.05em' }}>
+              Zenith
+            </span>
           </div>
         )}
         {collapsed && (
-          <div className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-purple-600 text-white font-bold text-xs shadow-lg shadow-primary/20">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
             Z
           </div>
         )}
