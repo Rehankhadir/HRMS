@@ -36,8 +36,6 @@ import {
 import {
   employees,
   attendance,
-  attendanceTrend,
-  departmentDistribution,
   activities,
 } from '@/data/mock'
 
@@ -64,6 +62,32 @@ export function AdminDashboard() {
   const presentToday = todayAttendance.filter(a => a.status === 'present' || a.status === 'late').length
   const absentToday = todayAttendance.filter(a => a.status === 'absent').length
   const onLeaveToday = todayAttendance.filter(a => a.status === 'on-leave').length
+
+  const departmentDistribution = Object.entries(
+    employees.reduce((acc, emp) => {
+      acc[emp.department] = (acc[emp.department] || 0) + 1
+      return acc
+    }, {} as Record<string, number>)
+  ).map(([name, value], i) => ({
+    name,
+    value,
+    color: COLORS[i % COLORS.length],
+  }))
+
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const attendanceTrend = monthNames.slice(1, 7).map((month) => {
+    const monthIndex = monthNames.indexOf(month)
+    const monthRecords = attendance.filter(a => {
+      const d = new Date(a.date)
+      return d.getFullYear() === 2026 && d.getMonth() === monthIndex
+    })
+    return {
+      month,
+      present: monthRecords.filter(a => a.status === 'present' || a.status === 'late').length,
+      absent: monthRecords.filter(a => a.status === 'absent').length,
+      late: monthRecords.filter(a => a.status === 'late').length,
+    }
+  })
 
   const upcomingBirthdays = employees
     .filter(e => {
