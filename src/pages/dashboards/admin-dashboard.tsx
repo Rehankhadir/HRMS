@@ -102,10 +102,41 @@ export function AdminDashboard() {
       {/* Welcome Header */}
       <motion.div variants={item}>
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 text-white">
-          <div className="absolute inset-0 opacity-[0.07]">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-white rounded-full blur-3xl -translate-y-1/3 translate-x-1/4" />
-            <div className="absolute bottom-0 left-0 w-60 h-60 bg-white rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
-          </div>
+          {/* Decorative shapes */}
+          <svg className="absolute top-0 right-0 h-full w-[55%] text-white/[0.07]" viewBox="0 0 600 200" preserveAspectRatio="none">
+            <path d="M600,0 L600,200 L350,200 C380,170 420,130 400,90 C380,50 340,30 300,40 C260,50 230,80 200,100 C170,120 130,130 100,110 C70,90 50,50 80,20 C110,-10 200,0 300,0 C400,0 500,0 600,0 Z" fill="currentColor" />
+          </svg>
+          <svg className="absolute top-0 right-0 h-full w-[45%] text-white/[0.04]" viewBox="0 0 500 200" preserveAspectRatio="none">
+            <path d="M500,0 L500,200 L300,200 C330,160 360,120 340,80 C320,40 280,20 240,30 C200,40 170,70 140,90 C110,110 70,100 50,70 C30,40 60,10 120,0 L500,0 Z" fill="currentColor" />
+          </svg>
+          {/* Bottom flowing waves */}
+          <svg className="absolute bottom-0 left-0 w-full h-28 text-white/[0.05]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,60 C180,100 360,20 540,50 C720,80 900,30 1080,60 C1260,90 1380,40 1440,50 L1440,120 L0,120 Z" fill="currentColor" />
+          </svg>
+          <svg className="absolute bottom-0 left-0 w-full h-20 text-white/[0.08]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,80 C240,40 480,100 720,70 C960,40 1200,90 1440,60 L1440,120 L0,120 Z" fill="currentColor" />
+          </svg>
+          <svg className="absolute bottom-0 left-0 w-full h-12 text-white/[0.10]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,90 C360,60 720,110 1080,80 C1260,65 1380,95 1440,85 L1440,120 L0,120 Z" fill="currentColor" />
+          </svg>
+          {/* Top flowing wave */}
+          <svg className="absolute top-0 left-0 w-full h-14 text-white/[0.03]" viewBox="0 0 1440 120" preserveAspectRatio="none">
+            <path d="M0,20 C360,60 720,0 1080,30 C1260,45 1380,15 1440,25 L1440,0 L0,0 Z" fill="currentColor" />
+          </svg>
+          {/* Floating organic blobs */}
+          <svg className="absolute -top-8 -left-8 h-56 w-56 text-white/[0.06]" viewBox="0 0 200 200">
+            <path d="M45.3,-51.2C58.3,-40.8,68.5,-25.4,71.1,-8.5C73.7,8.4,68.7,26.8,57.5,39.6C46.3,52.4,28.9,59.6,10.8,63.1C-7.3,66.6,-26.1,66.4,-40.8,57.8C-55.5,49.2,-66.1,32.2,-69.5,13.7C-72.9,-4.8,-69.1,-24.8,-58.5,-38.2C-47.9,-51.6,-30.4,-58.4,-13.8,-62.1C2.8,-65.8,32.3,-61.6,45.3,-51.2Z" fill="currentColor" transform="translate(100 100)" />
+          </svg>
+          <svg className="absolute top-1/3 right-[15%] h-32 w-32 text-white/[0.04]" viewBox="0 0 200 200">
+            <path d="M39.9,-47.7C52.5,-37.8,63.6,-25.4,66.7,-10.8C69.8,3.8,64.9,20.6,55.1,33.1C45.3,45.6,30.6,53.8,14.7,58.8C-1.2,63.8,-18.3,65.6,-32.4,59C-46.5,52.4,-57.6,37.4,-62.1,21.1C-66.6,4.8,-64.5,-12.8,-56.2,-26.2C-47.9,-39.6,-33.4,-48.8,-18.7,-56.2C-4,-63.6,10.9,-69.2,24.5,-65.2C38.1,-61.2,50.4,-47.6,39.9,-47.7Z" fill="currentColor" transform="translate(100 100)" />
+          </svg>
+          {/* Thin accent curves */}
+          <svg className="absolute bottom-8 left-[10%] w-64 h-8 text-white/[0.06]" viewBox="0 0 300 30" preserveAspectRatio="none">
+            <path d="M0,15 Q75,0 150,15 Q225,30 300,15" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
+          <svg className="absolute top-1/2 -translate-y-1/2 right-[10%] w-48 h-8 text-white/[0.05]" viewBox="0 0 200 30" preserveAspectRatio="none">
+            <path d="M0,15 Q50,0 100,15 Q150,30 200,15" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
