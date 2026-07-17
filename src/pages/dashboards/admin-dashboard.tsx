@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import { useAuth } from '@/contexts/auth-context'
 import { useAnnouncements } from '@/contexts/announcement-context'
-import { useOnboarding } from '@/contexts/onboarding-context'
-import { useExit } from '@/contexts/exit-context'
 import {
   Users,
   UserCheck,
@@ -22,10 +20,6 @@ import {
   Award,
   Zap,
   Sparkles,
-  UserPlus,
-  LogOut,
-  CheckCircle2,
-  AlertCircle,
 } from 'lucide-react'
 import {
   BarChart,
@@ -64,10 +58,6 @@ export function AdminDashboard() {
   const { toast } = useToast()
   const { user } = useAuth()
   const { announcements } = useAnnouncements()
-  const { items: onboardingItems, toggleTask: toggleOnboardingTask } = useOnboarding()
-  const { items: exitItems, toggleTask: toggleExitTask } = useExit()
-
-  const canManageHR = user?.role === 'admin' || user?.role === 'hr'
 
   const todayStr = '2026-07-15'
   const todayAttendance = attendance.filter(a => a.date === todayStr)
@@ -261,157 +251,6 @@ export function AdminDashboard() {
           </Card>
         </div>
       </motion.div>
-
-      {/* Onboarding & Exit Pipelines — HR/Admin only */}
-      {canManageHR && (
-        <motion.div variants={item}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            {/* Onboarding Pipeline */}
-            <Card className="border-gray-100">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
-                      <UserPlus className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-gray-900">Onboarding Pipeline</h3>
-                      <p className="text-[11px] text-gray-500">{onboardingItems.length} new joiner{onboardingItems.length !== 1 ? 's' : ''} this week</p>
-                    </div>
-                  </div>
-                </div>
-                {onboardingItems.length > 0 ? (
-                  <div className="space-y-3">
-                    {onboardingItems.map((entry) => {
-                      const emp = employees.find(e => e.id === entry.employeeId)
-                      if (!emp) return null
-                      const docDone = entry.documents.filter(t => t.completed).length
-                      const setupDone = entry.setup.filter(t => t.completed).length
-                      const totalTasks = entry.documents.length + entry.setup.length
-                      const completedTasks = docDone + setupDone
-                      const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
-                      return (
-                        <div key={entry.id} className="p-3 rounded-xl bg-gradient-to-br from-blue-50/50 to-indigo-50/30 border border-blue-100/60">
-                          <div className="flex items-center gap-3 mb-2">
-                            <Avatar initials={`${emp.firstName[0]}${emp.lastName[0]}`} size="sm" color="#4F46E5" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-gray-900">{emp.firstName} {emp.lastName}</p>
-                              <p className="text-[10px] text-gray-500">{emp.designation} · {emp.department}</p>
-                            </div>
-                            <Badge variant={entry.status === 'completed' ? 'success' : 'secondary'} className="text-[10px]">
-                              {entry.status}
-                            </Badge>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[10px] text-gray-500">Progress</span>
-                              <span className="text-[10px] font-medium text-gray-700">{progress}%</span>
-                            </div>
-                            <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
-                              <div className="h-full rounded-full bg-blue-500 transition-all duration-500" style={{ width: `${progress}%` }} />
-                            </div>
-                          </div>
-                          {/* Tasks */}
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Documents ({docDone}/{entry.documents.length})</p>
-                            {entry.documents.map(task => (
-                              <label key={task.id} className="flex items-center gap-2 cursor-pointer group">
-                                <input type="checkbox" checked={task.completed} onChange={() => toggleOnboardingTask(entry.id, 'documents', task.id)} className="h-3.5 w-3.5 rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
-                                <span className={`text-[11px] ${task.completed ? 'text-gray-400 line-through' : 'text-gray-700 group-hover:text-gray-900'}`}>{task.label}</span>
-                              </label>
-                            ))}
-                            <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider pt-1">Setup ({setupDone}/{entry.setup.length})</p>
-                            {entry.setup.map(task => (
-                              <label key={task.id} className="flex items-center gap-2 cursor-pointer group">
-                                <input type="checkbox" checked={task.completed} onChange={() => toggleOnboardingTask(entry.id, 'setup', task.id)} className="h-3.5 w-3.5 rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
-                                <span className={`text-[11px] ${task.completed ? 'text-gray-400 line-through' : 'text-gray-700 group-hover:text-gray-900'}`}>{task.label}</span>
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <UserPlus className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                    <p className="text-xs">No new joiners this week</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Exit Pipeline */}
-            <Card className="border-gray-100">
-              <CardContent className="p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50">
-                      <LogOut className="h-5 w-5 text-red-500" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-semibold text-gray-900">Exit Pipeline</h3>
-                      <p className="text-[11px] text-gray-500">{exitItems.length} employee{exitItems.length !== 1 ? 's' : ''} serving notice</p>
-                    </div>
-                  </div>
-                </div>
-                {exitItems.length > 0 ? (
-                  <div className="space-y-3">
-                    {exitItems.map((entry) => {
-                      const emp = employees.find(e => e.id === entry.employeeId)
-                      if (!emp) return null
-                      const done = entry.formalities.filter(t => t.completed).length
-                      const total = entry.formalities.length
-                      const progress = total > 0 ? Math.round((done / total) * 100) : 0
-                      const daysLeft = Math.max(0, Math.ceil((new Date(entry.lastWorkingDay).getTime() - new Date('2026-07-15').getTime()) / (1000 * 60 * 60 * 24)))
-                      return (
-                        <div key={entry.id} className="p-3 rounded-xl bg-gradient-to-br from-red-50/50 to-orange-50/30 border border-red-100/60">
-                          <div className="flex items-center gap-3 mb-2">
-                            <Avatar initials={`${emp.firstName[0]}${emp.lastName[0]}`} size="sm" color="#EF4444" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-xs font-semibold text-gray-900">{emp.firstName} {emp.lastName}</p>
-                              <p className="text-[10px] text-gray-500">{emp.designation} · {emp.department}</p>
-                            </div>
-                            <div className="text-right">
-                              <Badge variant="danger" className="text-[10px]">{daysLeft}d left</Badge>
-                              <p className="text-[10px] text-gray-400 mt-0.5">LWD: {new Date(entry.lastWorkingDay).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                            </div>
-                          </div>
-                          {/* Progress bar */}
-                          <div className="mb-2">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[10px] text-gray-500">Formalities</span>
-                              <span className="text-[10px] font-medium text-gray-700">{progress}%</span>
-                            </div>
-                            <div className="h-1.5 w-full rounded-full bg-gray-200 overflow-hidden">
-                              <div className="h-full rounded-full bg-red-500 transition-all duration-500" style={{ width: `${progress}%` }} />
-                            </div>
-                          </div>
-                          {/* Tasks */}
-                          <div className="space-y-1">
-                            {entry.formalities.map(task => (
-                              <label key={task.id} className="flex items-center gap-2 cursor-pointer group">
-                                <input type="checkbox" checked={task.completed} onChange={() => toggleExitTask(entry.id, task.id)} className="h-3.5 w-3.5 rounded border-gray-300 text-red-500 focus:ring-red-500" />
-                                <span className={`text-[11px] ${task.completed ? 'text-gray-400 line-through' : 'text-gray-700 group-hover:text-gray-900'}`}>{task.label}</span>
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <LogOut className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                    <p className="text-xs">No employees on notice period</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </motion.div>
-      )}
 
       {/* Bottom Row */}
       <motion.div variants={item}>
