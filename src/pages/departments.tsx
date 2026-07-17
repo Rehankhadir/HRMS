@@ -86,7 +86,7 @@ export function Departments() {
               <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 sm:pb-0">
                 <div className="flex items-center gap-3">
                   <div
-                    className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl shrink-0"
+                    className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg shrink-0"
                     style={{ backgroundColor: `${dept.color}15`, color: dept.color }}
                   >
                     <Building2 className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -143,7 +143,7 @@ export function Departments() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">

@@ -399,7 +399,7 @@ export function Sidebar({ collapsed, onToggle, onClose }: SidebarProps) {
       <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4 shrink-0">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
               Z
             </div>
             <span className="text-lg font-black tracking-tighter bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent select-none" style={{ fontFamily: "'Inter', 'SF Pro Display', system-ui, sans-serif", letterSpacing: '-0.05em' }}>
@@ -408,7 +408,7 @@ export function Sidebar({ collapsed, onToggle, onClose }: SidebarProps) {
           </div>
         )}
         {collapsed && (
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary via-indigo-500 to-purple-600 text-white font-black text-sm shadow-lg shadow-primary/30 tracking-tighter">
             Z
           </div>
         )}
@@ -434,7 +434,7 @@ export function Sidebar({ collapsed, onToggle, onClose }: SidebarProps) {
                     to={item.href}
                     onClick={handleNavClick}
                     className={cn(
-                      "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-200",
+                      "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-200",
                       isActive
                         ? "bg-primary/10 text-primary shadow-sm"
                         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
@@ -464,7 +464,7 @@ export function Sidebar({ collapsed, onToggle, onClose }: SidebarProps) {
       <div className="border-t border-gray-100 p-3 shrink-0">
         <button
           onClick={onToggle}
-          className="hidden lg:flex w-full items-center justify-center rounded-xl p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+          className="hidden lg:flex w-full items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
         >
           {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>

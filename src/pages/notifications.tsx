@@ -162,7 +162,7 @@ export function NotificationsPage() {
             {allNotifications.length > 0 ? (
               <div className="space-y-2">
                 {allNotifications.map((notif) => (
-                  <div key={notif.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div key={notif.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className={`mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${typeColors[notif.type]}`}>
                       <notif.icon className="h-4 w-4" />
                     </div>

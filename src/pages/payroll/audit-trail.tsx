@@ -133,7 +133,7 @@ export function AuditTrailPage() {
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col items-center justify-center py-32"
       >
-        <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-danger/10 mb-6">
+        <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-danger/10 mb-6">
           <Shield className="h-10 w-10 text-danger" />
         </div>
         <h2 className="text-sm font-bold text-text-primary">Access Denied</h2>
@@ -211,7 +211,7 @@ export function AuditTrailPage() {
                 <p className="text-xs font-medium text-text-secondary">Actions Today</p>
                 <p className="mt-2 text-sm font-bold text-text-primary">{todayCount}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                 <Activity className="h-6 w-6 text-primary" />
               </div>
             </div>
@@ -225,7 +225,7 @@ export function AuditTrailPage() {
                 <p className="text-xs font-medium text-text-secondary">Actions This Week</p>
                 <p className="mt-2 text-sm font-bold text-text-primary">{weekCount}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-success/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-success/10">
                 <Clock className="h-6 w-6 text-success" />
               </div>
             </div>
@@ -239,7 +239,7 @@ export function AuditTrailPage() {
                 <p className="text-xs font-medium text-text-secondary">Actions This Month</p>
                 <p className="mt-2 text-sm font-bold text-text-primary">{monthCount}</p>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-warning/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-warning/10">
                 <TrendingUp className="h-6 w-6 text-warning" />
               </div>
             </div>

@@ -85,7 +85,7 @@ export function EmployeeDashboard() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 sm:space-y-8">
       {/* Welcome Header */}
       <motion.div variants={item}>
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 text-white">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 text-white">
           <svg className="absolute top-0 right-0 h-full w-[55%] text-white/[0.07]" viewBox="0 0 600 200" preserveAspectRatio="none">
             <path d="M600,0 L600,200 L350,200 C380,170 420,130 400,90 C380,50 340,30 300,40 C260,50 230,80 200,100 C170,120 130,130 100,110 C70,90 50,50 80,20 C110,-10 200,0 300,0 C400,0 500,0 600,0 Z" fill="currentColor" />
           </svg>
@@ -159,9 +159,9 @@ export function EmployeeDashboard() {
             <button
               key={action.label}
               onClick={action.action}
-              className="group flex flex-col items-center gap-3 rounded-2xl bg-white p-4 sm:p-5 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              className="group flex flex-col items-center gap-3 rounded-lg bg-white p-4 sm:p-5 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
             >
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${action.color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                 <action.icon className="h-6 w-6" />
               </div>
               <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900">{action.label}</span>
@@ -215,7 +215,7 @@ export function EmployeeDashboard() {
                     <p className="text-sm sm:text-base font-bold text-gray-900 capitalize">{stat.value}</p>
                     <p className="text-xs text-gray-400 mt-1">{stat.sub}</p>
                   </div>
-                  <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl ${stat.bgColor}`}>
+                  <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg ${stat.bgColor}`}>
                     <stat.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.color}`} />
                   </div>
                 </div>
@@ -232,7 +232,7 @@ export function EmployeeDashboard() {
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
                     <Clock className="h-5 w-5 text-amber-600" />
                   </div>
                   <div>
@@ -285,7 +285,7 @@ export function EmployeeDashboard() {
               {recentLeaves.length > 0 ? (
                 <div className="space-y-3">
                   {recentLeaves.map((leave) => (
-                    <div key={leave.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div key={leave.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors">
                       <div className="flex items-center gap-3">
                         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                           leave.status === 'approved' ? 'bg-success/10 text-success' :
@@ -331,7 +331,7 @@ export function EmployeeDashboard() {
               {announcements.length > 0 ? (
                 <div className="space-y-3">
                   {announcements.slice(0, 3).map((ann) => (
-                    <div key={ann.id} className="p-3 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100">
+                    <div key={ann.id} className="p-3 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100">
                       <div className="flex items-start justify-between mb-1">
                         <h4 className="text-xs font-semibold text-gray-900">{ann.title}</h4>
                         <Badge variant={ann.priority === 'high' ? 'danger' : ann.priority === 'medium' ? 'warning' : 'secondary'} className="text-[10px]">

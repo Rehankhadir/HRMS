@@ -384,7 +384,7 @@ export function InvestmentDeclarations() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white shadow-2xl p-6"
+            className="w-full max-w-md rounded-xl bg-white shadow-2xl p-6"
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xs font-semibold text-text-primary">Declaration Details</h3>

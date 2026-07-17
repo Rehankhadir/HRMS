@@ -142,7 +142,7 @@ export function AdminDashboard() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 sm:space-y-8">
       {/* Welcome Header */}
       <motion.div variants={item}>
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 text-white">
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary-dark p-6 sm:p-8 text-white">
           {/* Decorative shapes */}
           <svg className="absolute top-0 right-0 h-full w-[55%] text-white/[0.07]" viewBox="0 0 600 200" preserveAspectRatio="none">
             <path d="M600,0 L600,200 L350,200 C380,170 420,130 400,90 C380,50 340,30 300,40 C260,50 230,80 200,100 C170,120 130,130 100,110 C70,90 50,50 80,20 C110,-10 200,0 300,0 C400,0 500,0 600,0 Z" fill="currentColor" />
@@ -212,7 +212,7 @@ export function AdminDashboard() {
       {/* Quick Employee Search */}
       <motion.div variants={item}>
         <div className="relative">
-          <div className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition-all duration-200 ${empSearchFocused ? 'border-primary shadow-lg shadow-primary/10 ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'}`}>
+            <div className={`flex items-center gap-3 rounded-lg border bg-white px-4 py-3 transition-all duration-200 ${empSearchFocused ? 'border-primary shadow-lg shadow-primary/10 ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'}`}>
             <Search className="h-5 w-5 text-gray-400 shrink-0" />
             <input
               type="text"
@@ -232,7 +232,7 @@ export function AdminDashboard() {
 
           {/* Search Results Dropdown */}
           {empSearchFocused && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl border border-gray-100 bg-white shadow-2xl z-50 overflow-hidden">
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-lg border border-gray-100 bg-white shadow-2xl z-50 overflow-hidden">
               <div className="max-h-96 overflow-y-auto">
                 {searchResults.map((emp) => (
                   <button
@@ -262,7 +262,7 @@ export function AdminDashboard() {
           )}
 
           {empSearchFocused && empSearch.trim() && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl border border-gray-100 bg-white shadow-2xl z-50 p-8 text-center">
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-lg border border-gray-100 bg-white shadow-2xl z-50 p-8 text-center">
               <Users className="h-10 w-10 mx-auto mb-2 text-gray-300" />
               <p className="text-sm text-gray-500">No employees found for "{empSearch}"</p>
             </div>
@@ -277,9 +277,9 @@ export function AdminDashboard() {
             <button
               key={action.label}
               onClick={action.action}
-              className="group flex flex-col items-center gap-3 rounded-2xl bg-white p-4 sm:p-5 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+              className="group flex flex-col items-center gap-3 rounded-lg bg-white p-4 sm:p-5 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
             >
-              <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${action.color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${action.color} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                 <action.icon className="h-6 w-6" />
               </div>
               <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900">{action.label}</span>
@@ -305,7 +305,7 @@ export function AdminDashboard() {
                     <p className="text-sm sm:text-base font-bold text-gray-900">{stat.value}</p>
                     <p className={`text-xs mt-1 ${stat.changeColor}`}>{stat.change}</p>
                   </div>
-                  <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl ${stat.bgColor}`}>
+                  <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg ${stat.bgColor}`}>
                     <stat.icon className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.color}`} />
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export function AdminDashboard() {
               </div>
               <div className="space-y-4">
                 {activities.slice(0, 5).map((activity) => (
-                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div key={activity.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${
                       activity.type === 'attendance' ? 'bg-success/10 text-success' :
                       activity.type === 'leave' ? 'bg-warning/10 text-warning' :
@@ -496,7 +496,7 @@ export function AdminDashboard() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {announcements.map((ann) => (
-                  <div key={ann.id} className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100">
+                  <div key={ann.id} className="p-4 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100/50 border border-gray-100">
                     <div className="flex items-start justify-between mb-2">
                       <h4 className="font-semibold text-gray-900">{ann.title}</h4>
                       <Badge variant={ann.priority === 'high' ? 'danger' : ann.priority === 'medium' ? 'warning' : 'secondary'}>

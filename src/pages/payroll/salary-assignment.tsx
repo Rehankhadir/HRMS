@@ -541,7 +541,7 @@ export function SalaryAssignment() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-3xl my-8 rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-3xl my-8 rounded-xl bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">
@@ -701,7 +701,7 @@ export function SalaryAssignment() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-lg rounded-xl bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">Bulk Salary Upload</h2>

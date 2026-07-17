@@ -155,7 +155,7 @@ export function EmployeeProfile() {
               <ChevronLeft className="h-4 w-4" />
             </button>
             <div className="flex-1 overflow-x-auto scrollbar-hide">
-              <div className="flex gap-1 sm:gap-1.5 rounded-xl bg-background p-1 min-w-max">
+              <div className="flex gap-1 sm:gap-1.5 rounded-lg bg-background p-1 min-w-max">
                 {tabs.map((tab) => {
                   const Icon = tab.icon
                   return (
@@ -243,7 +243,7 @@ export function EmployeeProfile() {
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {directReports.map((report) => (
-                      <div key={report.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors">
+                      <div key={report.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
                         <Avatar initials={`${report.firstName[0]}${report.lastName[0]}`} size="sm" color="#4F46E5" />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium text-gray-900 truncate">{report.firstName} {report.lastName}</p>
@@ -372,17 +372,17 @@ export function EmployeeProfile() {
                   <div className="space-y-6">
                     {/* Summary */}
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div className="rounded-xl bg-gradient-to-br from-primary/5 to-primary/10 p-4">
+                      <div className="rounded-lg bg-gradient-to-br from-primary/5 to-primary/10 p-4">
                         <p className="text-xs text-text-secondary">Annual CTC</p>
                         <p className="mt-1 text-sm font-bold text-primary">{formatCurrency(employeeSalary.grossSalary)}</p>
                         <p className="text-xs text-text-secondary">Monthly: {formatCurrency(Math.round(employeeSalary.grossSalary / 12))}</p>
                       </div>
-                      <div className="rounded-xl bg-gradient-to-br from-success/5 to-success/10 p-4">
+                      <div className="rounded-lg bg-gradient-to-br from-success/5 to-success/10 p-4">
                         <p className="text-xs text-text-secondary">Net Pay</p>
                         <p className="mt-1 text-sm font-bold text-success">{formatCurrency(employeeSalary.netSalary)}</p>
                         <p className="text-xs text-text-secondary">Monthly: {formatCurrency(Math.round(employeeSalary.netSalary / 12))}</p>
                       </div>
-                      <div className="rounded-xl bg-gradient-to-br from-warning/5 to-warning/10 p-4">
+                      <div className="rounded-lg bg-gradient-to-br from-warning/5 to-warning/10 p-4">
                         <p className="text-xs text-text-secondary">Structure</p>
                         <p className="mt-1 text-xs font-bold text-text-primary">{structure.name}</p>
                         <p className="text-xs text-text-secondary">Effective: {new Date(employeeSalary.effectiveFrom).toLocaleDateString()}</p>
@@ -392,7 +392,7 @@ export function EmployeeProfile() {
                     {/* Components */}
                     <div>
                       <h4 className="mb-3 font-medium text-text-primary">Salary Components</h4>
-                      <div className="rounded-xl border border-border overflow-hidden">
+                      <div className="rounded-lg border border-border overflow-hidden">
                         <table className="w-full">
                           <thead>
                             <tr className="border-b border-border bg-background/50">

@@ -138,7 +138,7 @@ export function Documents() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`flex items-center gap-1.5 whitespace-nowrap rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors ${
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors ${
                 activeCategory === cat.id
                   ? 'bg-primary text-white'
                   : 'bg-background text-text-secondary hover:bg-border/50'
@@ -188,7 +188,7 @@ export function Documents() {
                   <Card key={doc.id} className="card-hover group">
                     <CardContent className="p-3 sm:p-4">
                       <div className="flex flex-col items-center text-center">
-                        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-xl bg-primary-50 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-lg bg-primary-50 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                           <Icon className="h-6 w-6 sm:h-8 sm:w-8" />
                         </div>
                         <h4 className="mt-2 sm:mt-3 text-xs sm:text-sm font-medium text-text-primary line-clamp-2">

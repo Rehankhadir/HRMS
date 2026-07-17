@@ -109,7 +109,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
       <div className="flex items-center gap-3 sm:gap-4">
         <button
           onClick={onMenuClick}
-          className="rounded-xl p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden transition-colors"
+          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 lg:hidden transition-colors"
           aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
@@ -143,7 +143,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
       <div className="flex items-center gap-1 sm:gap-2">
         {/* Search - Desktop */}
         <div className={cn(
-          "hidden lg:flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 transition-all duration-200",
+          "hidden lg:flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 transition-all duration-200",
           searchFocused && "ring-2 ring-primary/20 border-primary bg-white shadow-sm"
         )}>
           <Search className="h-4 w-4 text-gray-400" />
@@ -164,21 +164,21 @@ export function TopNav({ onMenuClick }: TopNavProps) {
 
         {/* Search - Mobile */}
         <button
-          className="lg:hidden rounded-xl p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+          className="lg:hidden rounded-lg p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           onClick={() => toast('Search functionality coming soon!', 'info')}
         >
           <Search className="h-5 w-5" />
         </button>
 
         {/* Help */}
-        <button className="hidden sm:flex rounded-xl p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
+        <button className="hidden sm:flex rounded-lg p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors">
           <HelpCircle className="h-5 w-5" />
         </button>
 
         {/* Dark Mode Toggle */}
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="rounded-xl p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+          className="rounded-lg p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           aria-label="Toggle dark mode"
         >
           {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
@@ -188,7 +188,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative rounded-xl p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+            className="relative rounded-lg p-2.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
           >
             <Bell className="h-5 w-5" />
             {notifications.length > 0 && (
@@ -205,7 +205,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowNotifications(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-gray-100 bg-white shadow-xl z-50 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-80 rounded-lg border border-gray-100 bg-white shadow-xl z-50 overflow-hidden">
                 <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
                   <h3 className="font-semibold text-gray-900">Notifications</h3>
                   <button className="text-xs text-primary hover:text-primary-dark font-medium" onClick={() => setShowNotifications(false)}>Mark all read</button>
@@ -250,7 +250,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex items-center gap-2 sm:gap-3 rounded-xl p-1.5 sm:pr-3 hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-2 sm:gap-3 rounded-lg p-1.5 sm:pr-3 hover:bg-gray-100 transition-colors"
           >
             <div className="relative">
               <Avatar initials={user?.name?.split(' ').map(n => n[0]).join('') || 'U'} size="sm" color="#4F46E5" />
@@ -270,7 +270,7 @@ export function TopNav({ onMenuClick }: TopNavProps) {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowProfileMenu(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-gray-100 bg-white shadow-xl py-2 z-50 overflow-hidden">
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-gray-100 bg-white shadow-xl py-2 z-50 overflow-hidden">
                 <div className="px-4 py-3 border-b border-gray-100 md:hidden">
                   <p className="font-semibold text-gray-900">{user?.name || 'User'}</p>
                   <p className="text-xs text-gray-500">{user?.email || ''}</p>

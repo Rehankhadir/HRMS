@@ -198,7 +198,7 @@ export function AddEmployee() {
       case 4:
         return (
           <div className="space-y-4 sm:space-y-6">
-            <div className="rounded-xl border-2 border-dashed border-border p-6 sm:p-8 text-center">
+            <div className="rounded-lg border-2 border-dashed border-border p-6 sm:p-8 text-center">
               <FileText className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-text-secondary" />
               <h3 className="mt-3 sm:mt-4 text-xs sm:text-sm font-medium text-text-primary">Upload Documents</h3>
               <p className="mt-2 text-xs sm:text-sm text-text-secondary">

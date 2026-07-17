@@ -564,7 +564,7 @@ export function TaxPlanning() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white shadow-2xl"
+            className="w-full max-w-md rounded-xl bg-white shadow-2xl"
           >
             <div className="flex items-center justify-between border-b border-border p-6">
               <h2 className="text-xs font-semibold text-text-primary">Add Declaration</h2>

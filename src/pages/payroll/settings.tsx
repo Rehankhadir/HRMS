@@ -506,7 +506,7 @@ export function SalarySettings() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-xl bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">
@@ -622,7 +622,7 @@ export function SalarySettings() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">Tax Settings</h2>

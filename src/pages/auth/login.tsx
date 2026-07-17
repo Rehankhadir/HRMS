@@ -177,7 +177,7 @@ export function LoginPage() {
             className="mb-12"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary font-bold text-sm shadow-lg">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-primary font-bold text-sm shadow-lg">
                 Z
               </div>
               <span className="text-sm font-bold text-white">Zenith HRMS</span>
@@ -215,9 +215,9 @@ export function LoginPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                className="flex items-start gap-4 rounded-2xl bg-white/10 backdrop-blur-sm p-4 border border-white/10"
+                className="flex items-start gap-4 rounded-lg bg-white/10 backdrop-blur-sm p-4 border border-white/10"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
                   <feature.icon className="h-5 w-5 text-white" />
                 </div>
                 <div>
@@ -259,7 +259,7 @@ export function LoginPage() {
             className="lg:hidden mb-8"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white font-bold text-xs">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white font-bold text-xs">
                 Z
               </div>
               <span className="text-sm font-bold text-text-primary">Zenith HRMS</span>
@@ -300,7 +300,7 @@ export function LoginPage() {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 pl-12 text-xs rounded-xl border-border"
+                  className="h-12 pl-12 text-xs rounded-lg border-border"
                   required
                 />
               </div>
@@ -327,7 +327,7 @@ export function LoginPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-12 pl-12 pr-12 text-xs rounded-xl border-border"
+                  className="h-12 pl-12 pr-12 text-xs rounded-lg border-border"
                   required
                 />
                 <button
@@ -342,7 +342,7 @@ export function LoginPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="rounded-xl bg-danger-50 border border-danger/20 p-3 text-xs text-danger">
+              <div className="rounded-lg bg-danger-50 border border-danger/20 p-3 text-xs text-danger">
                 {error}
               </div>
             )}
@@ -369,7 +369,7 @@ export function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 text-xs font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
+              className="w-full h-12 text-xs font-semibold rounded-lg shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -409,7 +409,7 @@ export function LoginPage() {
                 key={demo.role}
                 onClick={() => handleDemoLogin(demo.email, demo.password)}
                 disabled={isLoading}
-                className="w-full flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 group"
+                className="w-full flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 group"
               >
                 <div className={`flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br ${demo.color} shadow-md shrink-0`}>
                   <demo.icon className="h-4 w-4 text-white" />

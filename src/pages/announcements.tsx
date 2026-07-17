@@ -87,7 +87,7 @@ export function AnnouncementsPage() {
                 <CardContent className="p-4 sm:p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 shrink-0">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 shrink-0">
                         <Zap className="h-5 w-5 text-amber-500" />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -133,7 +133,7 @@ export function AnnouncementsPage() {
         <DialogContent onClose={() => setShowCreate(false)}>
           <DialogHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
                 <Zap className="h-5 w-5 text-amber-600" />
               </div>
               <div>

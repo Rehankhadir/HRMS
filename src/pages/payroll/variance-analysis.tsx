@@ -187,7 +187,7 @@ export function VarianceAnalysis() {
                   </p>
                 </div>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
                 <BarChart3 className="h-7 w-7 text-primary" />
               </div>
             </div>
@@ -212,7 +212,7 @@ export function VarianceAnalysis() {
                   </p>
                 </div>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-success/10">
                 <TrendingUp className="h-7 w-7 text-success" />
               </div>
             </div>
@@ -229,7 +229,7 @@ export function VarianceAnalysis() {
                   <p className="text-sm font-bold text-success">{summary.employeesWithIncrease}</p>
                 </div>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-warning/10">
                 <TrendingUp className="h-7 w-7 text-warning" />
               </div>
             </div>
@@ -246,7 +246,7 @@ export function VarianceAnalysis() {
                   <p className="text-sm font-bold text-danger">{summary.employeesWithDecrease}</p>
                 </div>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-danger/10">
                 <TrendingDown className="h-7 w-7 text-danger" />
               </div>
             </div>

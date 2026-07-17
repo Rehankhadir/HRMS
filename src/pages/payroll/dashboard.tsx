@@ -140,7 +140,7 @@ export function PayrollDashboard() {
                 <p className="mt-2 text-sm font-bold text-text-primary">{formatCurrency(totalGross)}</p>
                 <p className="mt-1 text-xs text-text-secondary">{currentPayslips.length} employees</p>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10">
                 <Wallet className="h-7 w-7 text-primary" />
               </div>
             </div>
@@ -158,7 +158,7 @@ export function PayrollDashboard() {
                   {((totalDeductions / totalGross) * 100).toFixed(1)}% of gross
                 </p>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-danger/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-danger/10">
                 <CreditCard className="h-7 w-7 text-danger" />
               </div>
             </div>
@@ -176,7 +176,7 @@ export function PayrollDashboard() {
                   {((totalNet / totalGross) * 100).toFixed(1)}% take home
                 </p>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-success/10">
                 <Banknote className="h-7 w-7 text-success" />
               </div>
             </div>
@@ -191,7 +191,7 @@ export function PayrollDashboard() {
                 <p className="mt-2 text-sm font-bold text-text-primary">{formatCurrency(avgSalary)}</p>
                 <p className="mt-1 text-xs text-text-secondary">Per employee</p>
               </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-warning/10">
                 <Users className="h-7 w-7 text-warning" />
               </div>
             </div>

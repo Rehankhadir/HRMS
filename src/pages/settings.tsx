@@ -55,7 +55,7 @@ export function Settings() {
 
       {/* Tabs */}
       <motion.div variants={item}>
-        <div className="flex gap-1 sm:gap-1.5 rounded-xl bg-background p-1 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1 sm:gap-1.5 rounded-lg bg-background p-1 overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => {
             const Icon = tab.icon
             return (
@@ -131,7 +131,7 @@ export function Settings() {
                   { name: 'Manager', description: 'View team and approve leaves', users: 8 },
                   { name: 'Employee', description: 'Self-service access only', users: 129 },
                 ].map((role) => (
-                  <div key={role.name} className="flex items-center justify-between rounded-xl border border-border p-3 sm:p-4">
+                  <div key={role.name} className="flex items-center justify-between rounded-lg border border-border p-3 sm:p-4">
                     <div>
                       <p className="text-xs font-medium text-text-primary">{role.name}</p>
                       <p className="text-xs text-text-secondary">{role.description}</p>
@@ -193,7 +193,7 @@ export function Settings() {
                   {['Light', 'Dark', 'System'].map((theme) => (
                     <button
                       key={theme}
-                      className={`flex h-16 sm:h-20 w-full sm:w-32 items-center justify-center rounded-xl border-2 transition-colors ${
+                      className={`flex h-16 sm:h-20 w-full sm:w-32 items-center justify-center rounded-lg border-2 transition-colors ${
                         theme === 'Light'
                           ? 'border-primary bg-white'
                           : 'border-border bg-background hover:border-primary/50'
@@ -242,7 +242,7 @@ export function Settings() {
                 { label: 'Monthly leave balance reminder', checked: true },
                 { label: 'Birthday and anniversary alerts', checked: true },
               ].map((item, index) => (
-                <div key={index} className="flex items-center justify-between rounded-xl border border-border p-3 sm:p-4">
+                <div key={index} className="flex items-center justify-between rounded-lg border border-border p-3 sm:p-4">
                   <span className="text-xs sm:text-sm text-text-primary pr-4">{item.label}</span>
                   <button
                     className={`relative inline-flex h-5 w-9 sm:h-6 sm:w-11 shrink-0 items-center rounded-full transition-colors ${

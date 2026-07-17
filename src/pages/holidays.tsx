@@ -104,9 +104,9 @@ export function Holidays() {
                     (new Date(holiday.date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
                   )
                   return (
-                    <div key={holiday.id} className="flex items-center justify-between rounded-xl border border-border p-3 sm:p-4 hover:shadow-sm transition-shadow">
+                    <div key={holiday.id} className="flex items-center justify-between rounded-lg border border-border p-3 sm:p-4 hover:shadow-sm transition-shadow">
                       <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 flex-col items-center justify-center rounded-xl bg-primary-50 shrink-0">
+                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 flex-col items-center justify-center rounded-lg bg-primary-50 shrink-0">
                           <span className="text-[10px] sm:text-xs font-medium text-primary">
                             {new Date(holiday.date).toLocaleDateString('en-US', { month: 'short' })}
                           </span>
@@ -156,7 +156,7 @@ export function Holidays() {
                 {pastHolidays.map((holiday) => {
                   const config = typeConfig[holiday.type]
                   return (
-                    <div key={holiday.id} className="flex items-center justify-between rounded-xl border border-border p-3 opacity-60">
+                    <div key={holiday.id} className="flex items-center justify-between rounded-lg border border-border p-3 opacity-60">
                       <div className="flex items-center gap-3">
                         <span className="text-xs sm:text-sm text-text-secondary">
                           {new Date(holiday.date).toLocaleDateString('en-US', {
@@ -182,7 +182,7 @@ export function Holidays() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">

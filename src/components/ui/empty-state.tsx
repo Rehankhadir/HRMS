@@ -14,12 +14,12 @@ const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
       <div
         ref={ref}
         className={cn(
-          "flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-background/50 px-6 py-16 text-center",
+          "flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-background/50 px-6 py-16 text-center",
           className
         )}
         {...props}
       >
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 text-primary">
+        <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary-50 text-primary">
           {icon}
         </div>
         <h3 className="mt-4 text-xs font-semibold text-text-primary">{title}</h3>

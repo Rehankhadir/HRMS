@@ -113,9 +113,9 @@ export function Leave() {
       {/* Pending Approvals Banner (Manager only) */}
       {isManager && pendingApprovals.length > 0 && (
         <motion.div variants={item}>
-          <div className="rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-4 sm:p-5 text-white">
+          <div className="rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 p-4 sm:p-5 text-white">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
                 <Clock className="h-5 w-5" />
               </div>
               <div>
@@ -129,7 +129,7 @@ export function Leave() {
 
       {/* Tabs */}
       <motion.div variants={item}>
-        <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
+        <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
           {[
             ...(isManager ? [{ id: 'pending', label: `Pending (${pendingApprovals.length})` }] : []),
             { id: 'balance', label: 'My Balance' },
@@ -161,7 +161,7 @@ export function Leave() {
                     const emp = employees.find(e => e.id === leave.employeeId)
                     if (!emp) return null
                     return (
-                      <div key={leave.id} className="rounded-xl border border-gray-100 p-4 hover:border-gray-200 transition-colors">
+                      <div key={leave.id} className="rounded-lg border border-gray-100 p-4 hover:border-gray-200 transition-colors">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                           <div className="flex items-center gap-3">
                             <Avatar initials={`${emp.firstName[0]}${emp.lastName[0]}`} size="sm" color="#4F46E5" />
@@ -216,7 +216,7 @@ export function Leave() {
                       <p className="text-xs font-medium text-gray-500">{lt.label}</p>
                       <p className="text-lg font-bold text-gray-900 mt-1">{lt.total - lt.used} <span className="text-xs font-normal text-gray-400">days left</span></p>
                     </div>
-                    <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${lt.color}15` }}>
+                    <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${lt.color}15` }}>
                       <CalendarDays className="h-5 w-5" style={{ color: lt.color }} />
                     </div>
                   </div>
@@ -318,7 +318,7 @@ export function Leave() {
                   if (!emp) return null
                   const config = statusConfig[leave.status]
                   return (
-                    <div key={leave.id} className="rounded-xl border border-gray-100 p-3">
+                    <div key={leave.id} className="rounded-lg border border-gray-100 p-3">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-3">
                           <Avatar initials={`${emp.firstName[0]}${emp.lastName[0]}`} size="sm" color="#4F46E5" />

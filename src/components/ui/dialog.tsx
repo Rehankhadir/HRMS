@@ -44,7 +44,7 @@ interface DialogContentProps {
 
 export function DialogContent({ children, onClose }: DialogContentProps) {
   return (
-    <div className="rounded-2xl bg-white shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
+    <div className="rounded-xl bg-white shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
       {onClose && (
         <button
           onClick={onClose}

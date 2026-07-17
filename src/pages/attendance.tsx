@@ -197,7 +197,7 @@ export function Attendance() {
           <Card key={stat.label}>
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 sm:gap-3">
-                <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-${stat.color}-50 text-${stat.color}`}>
+                <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-${stat.color}-50 text-${stat.color}`}>
                   <stat.icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 <div>
@@ -213,7 +213,7 @@ export function Attendance() {
       {/* Tabs & Filter */}
       <motion.div variants={item}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex gap-1 sm:gap-1.5 rounded-xl bg-background p-1">
+          <div className="flex gap-1 sm:gap-1.5 rounded-lg bg-background p-1">
             {[
               { id: 'table', label: 'Table' },
               { id: 'calendar', label: 'Calendar' },

@@ -17,7 +17,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
       <div
         ref={ref}
         className={cn(
-          "rounded-2xl border border-border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5",
+          "rounded-xl border border-border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:-translate-y-0.5",
           className
         )}
         {...props}

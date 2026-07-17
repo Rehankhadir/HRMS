@@ -69,7 +69,7 @@ export function Reports() {
       {/* Tabs */}
       <motion.div variants={item}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex gap-1 sm:gap-1.5 rounded-xl bg-background p-1 overflow-x-auto">
+          <div className="flex gap-1 sm:gap-1.5 rounded-lg bg-background p-1 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon
               return (
@@ -176,7 +176,7 @@ export function Reports() {
                   { label: 'Perfect Attendance', value: '45' },
                   { label: 'Most Punctual', value: 'Engineering' },
                 ].map((stat) => (
-                  <div key={stat.label} className="rounded-xl border border-border p-3 sm:p-4">
+                  <div key={stat.label} className="rounded-lg border border-border p-3 sm:p-4">
                     <p className="text-xs sm:text-sm text-text-secondary">{stat.label}</p>
                     <p className="mt-1 text-base sm:text-sm font-bold text-text-primary">{stat.value}</p>
                   </div>
@@ -275,7 +275,7 @@ export function Reports() {
                   { label: 'Approval Rate', value: '94%' },
                   { label: 'Most Used Type', value: 'Annual' },
                 ].map((stat) => (
-                  <div key={stat.label} className="rounded-xl border border-border p-3 sm:p-4">
+                  <div key={stat.label} className="rounded-lg border border-border p-3 sm:p-4">
                     <p className="text-xs sm:text-sm text-text-secondary">{stat.label}</p>
                     <p className="mt-1 text-base sm:text-sm font-bold text-text-primary">{stat.value}</p>
                   </div>

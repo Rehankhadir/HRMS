@@ -96,7 +96,7 @@ export function Designations() {
                     <tr key={desig.id} className="hover:bg-background/50 transition-colors">
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary">
+                           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary">
                             <Briefcase className="h-5 w-5" />
                           </div>
                           <span className="font-medium text-text-primary">{desig.name}</span>
@@ -133,7 +133,7 @@ export function Designations() {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-50 text-primary shrink-0">
+                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-50 text-primary shrink-0">
                       <Briefcase className="h-5 w-5" />
                     </div>
                     <div>
@@ -162,7 +162,7 @@ export function Designations() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xs font-bold text-text-primary">
