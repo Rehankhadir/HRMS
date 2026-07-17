@@ -1,3 +1,4 @@
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
@@ -20,6 +21,7 @@ import {
   Award,
   Zap,
   Sparkles,
+  Search,
 } from 'lucide-react'
 import {
   BarChart,
@@ -56,6 +58,21 @@ export function AdminDashboard() {
   const { toast } = useToast()
   const { user } = useAuth()
   const { announcements } = useAnnouncements()
+
+  const [empSearch, setEmpSearch] = useState('')
+  const [empSearchFocused, setEmpSearchFocused] = useState(false)
+
+  const searchResults = useMemo(() => {
+    if (!empSearch.trim()) return []
+    const q = empSearch.toLowerCase()
+    return employees.filter(e =>
+      e.firstName.toLowerCase().includes(q) ||
+      e.lastName.toLowerCase().includes(q) ||
+      e.email.toLowerCase().includes(q) ||
+      e.department.toLowerCase().includes(q) ||
+      e.designation.toLowerCase().includes(q)
+    ).slice(0, 8)
+  }, [empSearch])
 
   const todayStr = '2026-07-15'
   const todayAttendance = attendance.filter(a => a.date === todayStr)
@@ -189,6 +206,67 @@ export function AdminDashboard() {
               </div>
             </div>
           </div>
+        </div>
+      </motion.div>
+
+      {/* Quick Employee Search */}
+      <motion.div variants={item}>
+        <div className="relative">
+          <div className={`flex items-center gap-3 rounded-2xl border bg-white px-4 py-3 transition-all duration-200 ${empSearchFocused ? 'border-primary shadow-lg shadow-primary/10 ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'}`}>
+            <Search className="h-5 w-5 text-gray-400 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search employees by name, email, department, or designation..."
+              value={empSearch}
+              onChange={(e) => setEmpSearch(e.target.value)}
+              onFocus={() => setEmpSearchFocused(true)}
+              onBlur={() => { setTimeout(() => setEmpSearchFocused(false), 200) }}
+              className="flex-1 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+            />
+            {empSearch && (
+              <button onClick={() => setEmpSearch('')} className="text-gray-400 hover:text-gray-600">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
+          {empSearchFocused && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl border border-gray-100 bg-white shadow-2xl z-50 overflow-hidden">
+              <div className="max-h-96 overflow-y-auto">
+                {searchResults.map((emp) => (
+                  <button
+                    key={emp.id}
+                    onMouseDown={(e) => { e.preventDefault(); navigate(`/employees/${emp.id}`); setEmpSearch('') }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left border-b border-gray-50 last:border-0"
+                  >
+                    <Avatar initials={`${emp.firstName[0]}${emp.lastName[0]}`} size="sm" color="#4F46E5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{emp.firstName} {emp.lastName}</p>
+                      <p className="text-xs text-gray-500 truncate">{emp.designation} · {emp.department}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${emp.status === 'active' ? 'bg-green-50 text-green-700' : emp.status === 'on-leave' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700'}`}>
+                        {emp.status}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div className="border-t border-gray-100 px-4 py-2.5 bg-gray-50/50">
+                <button onMouseDown={(e) => { e.preventDefault(); navigate('/employees'); setEmpSearch('') }} className="w-full text-center text-xs text-primary hover:text-primary-dark font-medium">
+                  View all employees
+                </button>
+              </div>
+            </div>
+          )}
+
+          {empSearchFocused && empSearch.trim() && searchResults.length === 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl border border-gray-100 bg-white shadow-2xl z-50 p-8 text-center">
+              <Users className="h-10 w-10 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm text-gray-500">No employees found for "{empSearch}"</p>
+            </div>
+          )}
         </div>
       </motion.div>
 
