@@ -515,6 +515,14 @@ class PayrollStore {
     this.payslips = loadFromStorage(STORAGE_KEYS.PAYSLIPS, defaultPayslips)
     this.runs = loadFromStorage(STORAGE_KEYS.RUNS, defaultRuns)
     this.settings = loadFromStorage(STORAGE_KEYS.SETTINGS, defaultPayrollSettings)
+
+    // Ensure defaults are persisted so other stores (extended, compliance) can read them
+    if (!localStorage.getItem(STORAGE_KEYS.STRUCTURES)) saveToStorage(STORAGE_KEYS.STRUCTURES, this.structures)
+    if (!localStorage.getItem(STORAGE_KEYS.EMPLOYEE_SALARIES)) saveToStorage(STORAGE_KEYS.EMPLOYEE_SALARIES, this.employeeSalaries)
+    if (!localStorage.getItem(STORAGE_KEYS.PERIODS)) saveToStorage(STORAGE_KEYS.PERIODS, this.periods)
+    if (!localStorage.getItem(STORAGE_KEYS.PAYSLIPS)) saveToStorage(STORAGE_KEYS.PAYSLIPS, this.payslips)
+    if (!localStorage.getItem(STORAGE_KEYS.RUNS)) saveToStorage(STORAGE_KEYS.RUNS, this.runs)
+    if (!localStorage.getItem(STORAGE_KEYS.SETTINGS)) saveToStorage(STORAGE_KEYS.SETTINGS, this.settings)
   }
 
   getStructures() { return this.structures }

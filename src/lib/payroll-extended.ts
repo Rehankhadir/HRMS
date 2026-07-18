@@ -320,18 +320,69 @@ export class ExtendedPayrollStore {
       }
     })
   }
-  getECRRecords(month?: number, year?: number) { return [] }
+  getECRRecords(month?: number, year?: number) {
+    return this.generateECRRecords(month || 6, year || 2026)
+  }
 
   // ==================== STATUTORY COMPLIANCE ====================
   generateStatutoryCompliance(month: number, year: number): StatutoryCompliance {
     const records = this.generateECRRecords(month, year)
     const totalPF = records.reduce((sum, r) => sum + r.totalContribution, 0)
+
+    let totalESIEmployee = 0
+    let totalESIEmployer = 0
+    let totalPT = 0
+    let totalTDS = 0
+
+    records.forEach(r => {
+      const grossWages = r.grossWages
+      // ESI: applicable if gross ≤ 21000/month; employee 0.75%, employer 3.25%
+      if (grossWages <= 21000) {
+        totalESIEmployee += Math.round(grossWages * 0.0075)
+        totalESIEmployer += Math.round(grossWages * 0.0325)
+      }
+      // PT: slab-based (Maharashtra-like)
+      if (grossWages >= 10000) {
+        totalPT += grossWages >= 25000 ? 300 : grossWages >= 15000 ? 200 : 100
+      }
+    })
+
+    // TDS: sum TDS from payslips for this month
+    const payslips = loadExt('hrms_payslips', []) as any[]
+    const monthPayslips = payslips.filter((p: any) => p.month === month && p.year === year)
+    totalTDS = monthPayslips.reduce((sum: number, p: any) => {
+      const tdsComp = (p.deductions || []).find((d: any) => d.name === 'TDS')
+      return sum + (tdsComp ? tdsComp.amount : 0)
+    }, 0)
+
     const compliance: StatutoryCompliance = {
       id: genId('compliance'), month, year,
-      pfChallan: { totalEmployeeContribution: records.reduce((s, r) => s + r.epfContribution, 0), totalEmployerContribution: records.reduce((s, r) => s + r.epsContribution, 0), totalAdminCharges: records.reduce((s, r) => s + r.adminCharges, 0), totalEDLICharges: records.reduce((s, r) => s + r.edliContribution, 0), totalAmount: totalPF, dueDate: `${year}-${String(month + 1).padStart(2, '0')}-15`, status: 'pending' },
-      esiChallan: { totalEmployeeContribution: 0, totalEmployerContribution: 0, totalAmount: 0, dueDate: `${year}-${String(month + 1).padStart(2, '0')}-15`, status: 'pending' },
-      ptReturn: { totalTax: records.length * 200, dueDate: `${year}-${String(month + 1).padStart(2, '0')}-10`, status: 'pending' },
-      tdsReturn: { totalTDS: 0, dueDate: `${year}-${String(month + 1).padStart(2, '0')}-30`, status: 'pending' },
+      pfChallan: {
+        totalEmployeeContribution: records.reduce((s, r) => s + r.epfContribution, 0),
+        totalEmployerContribution: records.reduce((s, r) => s + r.epsContribution, 0),
+        totalAdminCharges: records.reduce((s, r) => s + r.adminCharges, 0),
+        totalEDLICharges: records.reduce((s, r) => s + r.edliContribution, 0),
+        totalAmount: totalPF,
+        dueDate: `${year}-${String(month + 1 > 12 ? 1 : month + 1).padStart(2, '0')}-15`,
+        status: 'pending',
+      },
+      esiChallan: {
+        totalEmployeeContribution: totalESIEmployee,
+        totalEmployerContribution: totalESIEmployer,
+        totalAmount: totalESIEmployee + totalESIEmployer,
+        dueDate: `${year}-${String(month + 1 > 12 ? 1 : month + 1).padStart(2, '0')}-15`,
+        status: 'pending',
+      },
+      ptReturn: {
+        totalTax: totalPT,
+        dueDate: `${year}-${String(month + 1 > 12 ? 1 : month + 1).padStart(2, '0')}-10`,
+        status: 'pending',
+      },
+      tdsReturn: {
+        totalTDS,
+        dueDate: `${year}-${String(month + 1 > 12 ? 1 : month + 1).padStart(2, '0')}-30`,
+        status: totalTDS > 0 ? 'pending' : 'pending',
+      },
       generatedAt: new Date().toISOString(),
     }
     return compliance
