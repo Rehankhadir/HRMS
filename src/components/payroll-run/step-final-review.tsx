@@ -184,7 +184,14 @@ export function StepFinalReview({
     if (!period) {
       period = payrollStore.createPeriod(month, year)
     }
-    payrollStore.generatePayslips(period.id)
+    payrollStore.generatePayslips(period.id, {
+      attendance,
+      joiners,
+      exits,
+      arrears,
+      offCyclePayments,
+      holds,
+    })
     payrollStore.processPayroll(period.id, 'HR Admin')
     payrollStore.clearDraft(month, year)
 

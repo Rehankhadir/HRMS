@@ -98,6 +98,7 @@ export function StepJoinerExit({
         })
         .map(ex => ({
           employeeId: ex.employeeId,
+          lastWorkingDay: ex.lastWorkingDay,
           action: 'pay' as const,
         }))
 

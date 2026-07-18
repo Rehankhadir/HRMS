@@ -9,6 +9,12 @@ import type {
   TaxSlab,
   TaxRegime,
   PayrollDraft,
+  EmployeeAttendanceDraft,
+  JoinerDraft,
+  ExitDraft,
+  ArrearDraft,
+  OffCycleDraft,
+  HoldDraft,
 } from '@/types'
 
 const STORAGE_KEYS = {
@@ -431,6 +437,58 @@ const defaultRuns: PayrollRun[] = [
   },
 ]
 
+export interface PayrollRunDraftData {
+  attendance: EmployeeAttendanceDraft[]
+  joiners: JoinerDraft[]
+  exits: ExitDraft[]
+  arrears: ArrearDraft[]
+  offCyclePayments: OffCycleDraft[]
+  holds: HoldDraft[]
+}
+
+function getWorkingDaysInMonth(month: number, year: number): number {
+  const daysInMonth = new Date(year, month, 0).getDate()
+  let count = 0
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dow = new Date(year, month - 1, d).getDay()
+    if (dow !== 0 && dow !== 6) count++
+  }
+  return count
+}
+
+function getDaysInMonth(month: number, year: number): number {
+  return new Date(year, month, 0).getDate()
+}
+
+function daysFromJoin(joinDate: string, month: number, year: number): number {
+  const join = new Date(joinDate + 'T00:00:00')
+  const lastDay = new Date(year, month, 0)
+  const startOfMonth = new Date(year, month - 1, 1)
+  if (join.getFullYear() > year || (join.getFullYear() === year && join.getMonth() > month - 1)) return 0
+  const effectiveStart = join > startOfMonth ? join : startOfMonth
+  if (effectiveStart > lastDay) return 0
+  return Math.floor((lastDay.getTime() - effectiveStart.getTime()) / 86400000) + 1
+}
+
+function daysTillExit(lastWorkingDay: string, month: number, year: number): number {
+  const exit = new Date(lastWorkingDay + 'T00:00:00')
+  const startOfMonth = new Date(year, month - 1, 1)
+  const lastDay = new Date(year, month, 0)
+  if (exit.getFullYear() < year || (exit.getFullYear() === year && exit.getMonth() < month - 1)) return 0
+  const effectiveEnd = exit < lastDay ? exit : lastDay
+  if (effectiveEnd < startOfMonth) return 0
+  return Math.floor((effectiveEnd.getTime() - startOfMonth.getTime()) / 86400000) + 1
+}
+
+function calculatePT(earnedSalary: number, slabs: { minSalary: number; maxSalary: number; tax: number }[]): number {
+  for (const slab of slabs) {
+    if (earnedSalary >= slab.minSalary && earnedSalary <= slab.maxSalary) {
+      return slab.tax
+    }
+  }
+  return 0
+}
+
 class PayrollStore {
   private structures: SalaryStructure[]
   private employeeSalaries: EmployeeSalary[]
@@ -547,27 +605,110 @@ class PayrollStore {
 
   getPayslip(id: string) { return this.payslips.find(p => p.id === id) }
 
-  generatePayslips(periodId: string) {
+  generatePayslips(periodId: string, draftData?: PayrollRunDraftData) {
     const period = this.periods.find(p => p.id === periodId)
     if (!period) return []
-    
+
+    const workingDays = getWorkingDaysInMonth(period.month, period.year)
+    const totalDaysInMonth = getDaysInMonth(period.month, period.year)
+
     const newPayslips = this.employeeSalaries.map((es, index) => {
+      // --- Attendance / pro-ration ---
+      let daysWorked = workingDays
+      let lopDays = 0
+      let leaveDays = 0
+
+      if (draftData) {
+        // Joiners: pro-rate from joining date
+        const joiner = draftData.joiners.find(j => j.employeeId === es.employeeId)
+        if (joiner) {
+          daysWorked = daysFromJoin(joiner.joiningDate, period.month, period.year)
+          // Exclude weekends from daysWorked
+          const joinDate = new Date(joiner.joiningDate + 'T00:00:00')
+          let weekendCount = 0
+          for (let d = 0; d < daysWorked; d++) {
+            const date = new Date(joinDate.getTime() + d * 86400000)
+            if (date.getDay() === 0 || date.getDay() === 6) weekendCount++
+          }
+          daysWorked = daysWorked - weekendCount
+        }
+
+        // Exits: cap at last working day
+        const exit = draftData.exits.find(e => e.employeeId === es.employeeId)
+        if (exit) {
+          const exitDays = daysTillExit(exit.lastWorkingDay, period.month, period.year)
+          if (exitDays > 0 && exitDays < daysWorked) {
+            daysWorked = exitDays
+          }
+        }
+
+        // LOP from attendance step
+        const empAttendance = draftData.attendance.find(a => a.employeeId === es.employeeId)
+        if (empAttendance) {
+          lopDays = empAttendance.lopDays
+          // Count approved leaves from resolutions marked as regularize
+          const regularized = empAttendance.resolutions.filter(r => r.action === 'regularize' && r.resolved).length
+          leaveDays = Math.max(0, lopDays) // simplified: leaves = lop bucket
+        }
+      }
+
+      const effectiveDays = Math.max(0, daysWorked - lopDays)
+      const attendanceRatio = workingDays > 0 ? effectiveDays / workingDays : 1
+
+      // --- Earnings (pro-rated) ---
+      const earnedBasic = Math.round(es.basicSalary * attendanceRatio)
+      const earnedHRA = Math.round(es.grossSalary * 0.2 * attendanceRatio)
+      const earnedSpecial = Math.round(es.grossSalary * 0.15 * attendanceRatio)
+      const earnedTransport = Math.round(8000 * attendanceRatio)
+      const earnedMedical = Math.round(5000 * attendanceRatio)
+      const earnedGross = earnedBasic + earnedHRA + earnedSpecial + earnedTransport + earnedMedical
+
+      // --- Arrears ---
+      const empArrears = draftData?.arrears.find(a => a.employeeId === es.employeeId)
+      const arrearAmount = empArrears?.overrideAmount || 0
+
+      // --- Off-cycle ---
+      const offCycleAmount = draftData?.offCyclePayments
+        .filter(o => o.employeeId === es.employeeId)
+        .reduce((sum, o) => sum + o.amount, 0) || 0
+
+      // --- Total earned before deductions ---
+      const totalEarned = earnedGross + arrearAmount + offCycleAmount
+
+      // --- Statutory deductions (on earned salary, not full gross) ---
+      const pf = Math.min(Math.round(earnedGross * 0.12), 1800)
+      const esi = earnedGross <= 21000 ? Math.round(earnedGross * 0.0075 * 100) / 100 : 0
+      const pt = calculatePT(earnedGross, this.settings.professionalTax.slabs)
+      const tds = Math.round(earnedGross * 0.1)
+
+      const totalDeductions = pf + esi + pt + tds
+      const netPay = totalEarned - totalDeductions
+
+      // --- Build payslip ---
       const earnings = [
-        { name: 'Basic Salary', type: 'earning' as const, amount: es.basicSalary },
-        { name: 'HRA', type: 'earning' as const, amount: Math.round(es.grossSalary * 0.2) },
-        { name: 'Special Allowance', type: 'earning' as const, amount: Math.round(es.grossSalary * 0.15) },
-        { name: 'Transport Allowance', type: 'earning' as const, amount: 8000 },
-        { name: 'Medical Allowance', type: 'earning' as const, amount: 5000 },
+        { name: 'Basic Salary', type: 'earning' as const, amount: earnedBasic },
+        { name: 'HRA', type: 'earning' as const, amount: earnedHRA },
+        { name: 'Special Allowance', type: 'earning' as const, amount: earnedSpecial },
+        { name: 'Transport Allowance', type: 'earning' as const, amount: earnedTransport },
+        { name: 'Medical Allowance', type: 'earning' as const, amount: earnedMedical },
       ]
+      if (arrearAmount > 0) {
+        earnings.push({ name: 'Arrears', type: 'earning' as const, amount: arrearAmount })
+      }
+      if (offCycleAmount > 0) {
+        earnings.push({ name: 'Off-Cycle Payment', type: 'earning' as const, amount: offCycleAmount })
+      }
+
       const deductions = [
-        { name: 'PF', type: 'deduction' as const, amount: Math.min(Math.round(es.grossSalary * 0.12), 1800) },
-        { name: 'ESI', type: 'deduction' as const, amount: es.grossSalary <= 21000 ? Math.round(es.grossSalary * 0.0075 * 100) / 100 : 0 },
-        { name: 'Professional Tax', type: 'deduction' as const, amount: 200 },
-        { name: 'TDS', type: 'deduction' as const, amount: Math.round(es.grossSalary * 0.1) },
+        { name: 'PF', type: 'deduction' as const, amount: pf },
+        { name: 'ESI', type: 'deduction' as const, amount: esi },
+        { name: 'Professional Tax', type: 'deduction' as const, amount: pt },
+        { name: 'TDS', type: 'deduction' as const, amount: tds },
       ]
+
       const gross = earnings.reduce((sum, e) => sum + e.amount, 0)
-      const totalDeductions = deductions.reduce((sum, d) => sum + d.amount, 0)
-      
+      const totalDeductionsCalc = deductions.reduce((sum, d) => sum + d.amount, 0)
+
       return {
         id: `payslip-${periodId}-${index + 1}`,
         employeeId: es.employeeId,
@@ -579,13 +720,13 @@ class PayrollStore {
         earnings,
         deductions,
         grossSalary: gross,
-        totalDeductions,
-        netSalary: gross - totalDeductions,
+        totalDeductions: totalDeductionsCalc,
+        netSalary: gross - totalDeductionsCalc,
         paymentMode: 'bank-transfer' as const,
-        workingDays: 30,
-        daysPresent: 28,
-        leaveDays: 2,
-        lopDays: 0,
+        workingDays,
+        daysPresent: effectiveDays,
+        leaveDays,
+        lopDays,
         overtimeHours: 0,
         overtimeAmount: 0,
       }

@@ -720,6 +720,7 @@ export interface JoinerDraft {
 
 export interface ExitDraft {
   employeeId: string
+  lastWorkingDay: string
   action: 'pay' | 'hold'
 }
 
