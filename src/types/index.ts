@@ -693,3 +693,79 @@ export interface ExitItem {
   status: ExitStatus
   formalities: ExitTask[]
 }
+
+// ============================================
+// PAYROLL RUN DRAFT — single source of truth
+// ============================================
+
+export interface AttendanceResolution {
+  date: string
+  action: 'regularize' | 'lop'
+  resolved: boolean
+}
+
+export interface EmployeeAttendanceDraft {
+  employeeId: string
+  lopDays: number
+  resolutions: AttendanceResolution[]
+  acknowledged: boolean
+}
+
+export interface JoinerDraft {
+  employeeId: string
+  joiningDate: string
+  proRatedGross: number
+  edited: boolean
+}
+
+export interface ExitDraft {
+  employeeId: string
+  action: 'pay' | 'hold'
+}
+
+export interface ArrearDraft {
+  employeeId: string
+  revisionId: string
+  autoAmount: number
+  overrideAmount: number
+  comment: string
+}
+
+export interface OffCycleDraft {
+  id: string
+  employeeId: string
+  name: string
+  amount: number
+  taxable: boolean
+}
+
+export interface HoldDraft {
+  employeeId: string
+  holdId: string
+  action: 'hold' | 'release'
+}
+
+export interface StatutoryOverride {
+  employeeId: string
+  pt: number
+  esi: number
+  tds: number
+  lwf: number
+}
+
+export interface PayrollDraft {
+  periodKey: string
+  month: number
+  year: number
+  selectedEmployees: string[]
+  lastCompletedStep: number
+  updatedAt: string
+  attendance: EmployeeAttendanceDraft[]
+  joiners: JoinerDraft[]
+  exits: ExitDraft[]
+  arrears: ArrearDraft[]
+  offCyclePayments: OffCycleDraft[]
+  holds: HoldDraft[]
+  statutoryOverrides: StatutoryOverride[]
+  recalculationNeeded: boolean
+}

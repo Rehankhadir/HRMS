@@ -1,40 +1,60 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Avatar } from '@/components/ui/avatar'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
 import { payrollStore } from '@/lib/payroll-store'
 import { employees } from '@/data/mock'
 import { useToast } from '@/components/ui/toast'
+import { StepLeaveAttendance } from '@/components/payroll-run/step-leave-attendance'
+import { StepJoinerExit } from '@/components/payroll-run/step-joiner-exit'
+import { StepRevisionArrear } from '@/components/payroll-run/step-revision-arrear'
+import { StepOffCycleHolds } from '@/components/payroll-run/step-offcycle-holds'
+import { StepFinalReview } from '@/components/payroll-run/step-final-review'
+import type {
+  PayrollDraft,
+  EmployeeAttendanceDraft,
+  JoinerDraft,
+  ExitDraft,
+  ArrearDraft,
+  OffCycleDraft,
+  HoldDraft,
+  StatutoryOverride,
+} from '@/types'
 import {
   ArrowLeft,
   Check,
-  X,
-  Calculator,
   Users,
-  AlertCircle,
-  CheckCircle,
   Clock,
+  CheckCircle,
   ChevronRight,
-  FileText,
-  Download,
-  Loader2,
+  Calendar,
+  UserPlus,
+  TrendingUp,
+  Wallet,
+  Calculator,
 } from 'lucide-react'
 
 const container = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.05 } },
 }
+const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }
 
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0 },
-}
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
+const STEPS = [
+  { id: 1, label: 'Period', icon: Clock },
+  { id: 2, label: 'Employees', icon: Users },
+  { id: 3, label: 'Attendance', icon: Calendar },
+  { id: 4, label: 'Joiners & Exits', icon: UserPlus },
+  { id: 5, label: 'Revisions', icon: TrendingUp },
+  { id: 6, label: 'Off-Cycle & Holds', icon: Wallet },
+  { id: 7, label: 'Review', icon: Calculator },
+]
 
 export function PayrollRun() {
   const navigate = useNavigate()
@@ -43,14 +63,21 @@ export function PayrollRun() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([])
-  const [processing, setProcessing] = useState(false)
-  const [processed, setProcessed] = useState(false)
+
+  const [attendance, setAttendance] = useState<EmployeeAttendanceDraft[]>([])
+  const [joiners, setJoiners] = useState<JoinerDraft[]>([])
+  const [exits, setExits] = useState<ExitDraft[]>([])
+  const [arrears, setArrears] = useState<ArrearDraft[]>([])
+  const [offCyclePayments, setOffCyclePayments] = useState<OffCycleDraft[]>([])
+  const [holds, setHolds] = useState<HoldDraft[]>([])
+  const [statutoryOverrides, setStatutoryOverrides] = useState<StatutoryOverride[]>([])
+  const [recalculationNeeded, setRecalculationNeeded] = useState(false)
+
+  const periodKey = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}`
 
   const employeeSalaries = payrollStore.getEmployeeSalaries()
   const periods = payrollStore.getPeriods()
   const existingPeriod = periods.find(p => p.month === selectedMonth && p.year === selectedYear)
-
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   const eligibleEmployees = employeeSalaries.map(es => {
     const emp = employees.find(e => e.id === es.employeeId)
@@ -59,78 +86,73 @@ export function PayrollRun() {
 
   const selectedEmployeeData = eligibleEmployees.filter(es => selectedEmployees.includes(es!.employeeId))
 
-  const totalGross = selectedEmployeeData.reduce((sum, es) => sum + es!.grossSalary, 0)
-  const totalDeductions = selectedEmployeeData.reduce((sum, es) => {
-    const pf = Math.min(Math.round(es!.grossSalary * 0.12), 1800)
-    const esi = es!.grossSalary <= 21000 ? Math.round(es!.grossSalary * 0.0075 * 100) / 100 : 0
-    const pt = 200
-    const tds = Math.round(es!.grossSalary * 0.1)
-    return sum + pf + esi + pt + tds
-  }, 0)
-  const totalNet = totalGross - totalDeductions
+  // Load draft on mount or period change
+  useEffect(() => {
+    const draft = payrollStore.getDraft(selectedMonth, selectedYear)
+    if (draft) {
+      setSelectedEmployees(draft.selectedEmployees)
+      setStep(draft.lastCompletedStep + 1)
+      setAttendance(draft.attendance)
+      setJoiners(draft.joiners)
+      setExits(draft.exits)
+      setArrears(draft.arrears)
+      setOffCyclePayments(draft.offCyclePayments)
+      setHolds(draft.holds)
+      setStatutoryOverrides(draft.statutoryOverrides)
+      setRecalculationNeeded(draft.recalculationNeeded)
+    }
+  }, [selectedMonth, selectedYear])
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(amount)
+  // Save draft on every state change
+  const saveDraft = useCallback((currentStep: number) => {
+    const draft: PayrollDraft = {
+      periodKey,
+      month: selectedMonth,
+      year: selectedYear,
+      selectedEmployees,
+      lastCompletedStep: currentStep,
+      updatedAt: new Date().toISOString(),
+      attendance,
+      joiners,
+      exits,
+      arrears,
+      offCyclePayments,
+      holds,
+      statutoryOverrides,
+      recalculationNeeded,
+    }
+    payrollStore.saveDraft(draft)
+  }, [periodKey, selectedMonth, selectedYear, selectedEmployees, attendance, joiners, exits, arrears, offCyclePayments, holds, statutoryOverrides, recalculationNeeded])
+
+  useEffect(() => {
+    if (step > 1) saveDraft(step - 1)
+  }, [step, saveDraft])
+
+  // Mark recalculation needed when going back and changing early steps
+  const markRecalcNeeded = () => {
+    if (step >= 7) setRecalculationNeeded(true)
+  }
+
+  const handleRecalculate = () => {
+    setRecalculationNeeded(false)
+    toast('Recalculated successfully', 'success')
   }
 
   const toggleEmployee = (id: string) => {
+    markRecalcNeeded()
     setSelectedEmployees(prev =>
       prev.includes(id) ? prev.filter(e => e !== id) : [...prev, id]
     )
   }
 
-  const selectAll = () => {
-    setSelectedEmployees(eligibleEmployees.map(es => es!.employeeId))
-  }
+  const selectAll = () => setSelectedEmployees(eligibleEmployees.map(es => es!.employeeId))
+  const deselectAll = () => { setSelectedEmployees([]); markRecalcNeeded() }
 
-  const deselectAll = () => {
-    setSelectedEmployees([])
-  }
-
-  const handleProcess = async () => {
-    if (selectedEmployees.length === 0) {
-      toast('Please select at least one employee', 'error')
-      return
-    }
-
-    setProcessing(true)
-    
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
-
-    let period = existingPeriod
-    if (!period) {
-      period = payrollStore.createPeriod(selectedMonth, selectedYear)
-    }
-
-    payrollStore.generatePayslips(period.id)
-    payrollStore.processPayroll(period.id, 'HR Admin')
-    
-    setProcessing(false)
-    setProcessed(true)
-    toast(`Payroll processed for ${selectedEmployees.length} employees!`, 'success')
-  }
-
-  const handleMarkPaid = () => {
-    if (existingPeriod) {
-      payrollStore.markPaid(existingPeriod.id)
-      toast('Payroll marked as paid!', 'success')
-      setTimeout(() => navigate('/payroll'), 1000)
-    }
-  }
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount)
 
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="space-y-6"
-    >
-      {/* Back Button */}
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <motion.div variants={item}>
         <Button variant="ghost" onClick={() => navigate('/payroll')} className="gap-2">
           <ArrowLeft className="h-4 w-4" />
@@ -138,46 +160,32 @@ export function PayrollRun() {
         </Button>
       </motion.div>
 
-      {/* Page Header */}
       <motion.div variants={item}>
         <h1 className="text-sm font-bold text-text-primary">Run Payroll</h1>
-        <p className="mt-1 text-text-secondary">Process salaries and generate payslips for your employees.</p>
+        <p className="mt-1 text-text-secondary">Process salaries with attendance, revisions, and statutory compliance.</p>
       </motion.div>
 
-      {/* Progress Steps */}
+      {/* Stepper Header */}
       <motion.div variants={item}>
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              {[
-                { id: 1, label: 'Select Period', icon: Clock },
-                { id: 2, label: 'Select Employees', icon: Users },
-                { id: 3, label: 'Review & Process', icon: Calculator },
-                { id: 4, label: 'Complete', icon: CheckCircle },
-              ].map((s, index) => (
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between overflow-x-auto">
+              {STEPS.map((s, index) => (
                 <div key={s.id} className="flex items-center">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                        step > s.id
-                          ? 'bg-success text-white'
-                          : step === s.id
-                          ? 'bg-primary text-white'
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
+                        step > s.id ? 'bg-success text-white'
+                          : step === s.id ? 'bg-primary text-white'
                           : 'bg-background text-text-secondary'
                       }`}
                     >
-                      {step > s.id ? (
-                        <Check className="h-5 w-5" />
-                      ) : (
-                        <s.icon className="h-5 w-5" />
-                      )}
+                      {step > s.id ? <Check className="h-4 w-4" /> : <s.icon className="h-4 w-4" />}
                     </div>
-                    <span className="text-xs font-medium text-text-primary hidden sm:block">
-                      {s.label}
-                    </span>
+                    <span className="text-[11px] font-medium text-text-primary hidden md:block">{s.label}</span>
                   </div>
-                  {index < 3 && (
-                    <div className={`mx-4 h-0.5 w-8 sm:w-16 ${step > s.id ? 'bg-success' : 'bg-border'}`} />
+                  {index < STEPS.length - 1 && (
+                    <div className={`mx-2 h-0.5 w-4 lg:w-8 ${step > s.id ? 'bg-success' : 'bg-border'}`} />
                   )}
                 </div>
               ))}
@@ -190,10 +198,8 @@ export function PayrollRun() {
       {step === 1 && (
         <motion.div variants={item}>
           <Card>
-            <CardHeader>
-              <CardTitle>Select Payroll Period</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="p-6 space-y-6">
+              <Label className="text-xs font-semibold text-text-primary">Select Payroll Period</Label>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Month</Label>
@@ -206,11 +212,7 @@ export function PayrollRun() {
                 <div className="space-y-2">
                   <Label>Year</Label>
                   <Select
-                    options={[
-                      { value: '2025', label: '2025' },
-                      { value: '2026', label: '2026' },
-                      { value: '2027', label: '2027' },
-                    ]}
+                    options={[{ value: '2025', label: '2025' }, { value: '2026', label: '2026' }, { value: '2027', label: '2027' }]}
                     value={String(selectedYear)}
                     onChange={(e) => setSelectedYear(Number(e.target.value))}
                   />
@@ -218,7 +220,7 @@ export function PayrollRun() {
               </div>
 
               {existingPeriod && (
-                <div className={`rounded-xl border p-4 ${
+                <div className={`rounded-lg border p-4 ${
                   existingPeriod.status === 'paid' ? 'border-success bg-success-50' :
                   existingPeriod.status === 'processed' ? 'border-warning bg-warning-50' :
                   'border-border bg-background'
@@ -227,17 +229,13 @@ export function PayrollRun() {
                     {existingPeriod.status === 'paid' ? (
                       <CheckCircle className="h-5 w-5 text-success" />
                     ) : existingPeriod.status === 'processed' ? (
-                      <AlertCircle className="h-5 w-5 text-warning" />
+                      <Clock className="h-5 w-5 text-warning" />
                     ) : (
                       <Clock className="h-5 w-5 text-text-secondary" />
                     )}
                     <div>
-                      <p className="font-medium text-text-primary">
-                        {monthNames[selectedMonth - 1]} {selectedYear} payroll
-                      </p>
-                      <p className="text-xs text-text-secondary">
-                        Status: <span className="capitalize font-medium">{existingPeriod.status}</span>
-                      </p>
+                      <p className="font-medium text-text-primary">{monthNames[selectedMonth - 1]} {selectedYear} payroll</p>
+                      <p className="text-xs text-text-secondary">Status: <span className="capitalize font-medium">{existingPeriod.status}</span></p>
                     </div>
                   </div>
                 </div>
@@ -258,15 +256,16 @@ export function PayrollRun() {
       {step === 2 && (
         <motion.div variants={item}>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Select Employees ({selectedEmployees.length} selected)</CardTitle>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={selectAll}>Select All</Button>
-                <Button variant="outline" size="sm" onClick={deselectAll}>Deselect All</Button>
+            <CardContent className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold text-text-primary">Select Employees ({selectedEmployees.length} selected)</Label>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={selectAll}>Select All</Button>
+                  <Button variant="outline" size="sm" onClick={deselectAll}>Deselect All</Button>
+                </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
+
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
                 {eligibleEmployees.map((es) => {
                   if (!es) return null
                   const isSelected = selectedEmployees.includes(es.employeeId)
@@ -274,44 +273,29 @@ export function PayrollRun() {
                     <div
                       key={es.employeeId}
                       onClick={() => toggleEmployee(es.employeeId)}
-                      className={`flex items-center justify-between rounded-xl border p-4 cursor-pointer transition-all ${
-                        isSelected
-                          ? 'border-primary bg-primary-50'
-                          : 'border-border hover:border-primary/50'
+                      className={`flex items-center justify-between rounded-lg border p-3 cursor-pointer transition-all ${
+                        isSelected ? 'border-primary bg-primary-50' : 'border-border hover:border-primary/50'
                       }`}
                     >
-                      <div className="flex items-center gap-4">
-                        <Avatar
-                          initials={`${es.employee.firstName[0]}${es.employee.lastName[0]}`}
-                          size="md"
-                          color={isSelected ? '#2563EB' : '#94A3B8'}
-                        />
+                      <div className="flex items-center gap-3">
+                        <Avatar initials={`${es.employee.firstName[0]}${es.employee.lastName[0]}`} size="sm" color={isSelected ? '#2563EB' : '#94A3B8'} />
                         <div>
-                          <p className="font-medium text-text-primary">
-                            {es.employee.firstName} {es.employee.lastName}
-                          </p>
-                          <p className="text-xs text-text-secondary">
-                            {es.employee.department} • {es.employee.designation}
-                          </p>
+                          <p className="font-medium text-text-primary">{es.employee.firstName} {es.employee.lastName}</p>
+                          <p className="text-xs text-text-secondary">{es.employee.department} · {es.employee.designation}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-text-primary">{formatCurrency(es.grossSalary)}</p>
-                        <p className="text-xs text-text-secondary">Gross / month</p>
-                      </div>
+                      <p className="text-xs font-semibold text-text-primary">{formatCurrency(es.grossSalary)}</p>
                     </div>
                   )
                 })}
               </div>
 
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between">
                 <Button variant="outline" onClick={() => setStep(1)}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Back
                 </Button>
                 <Button onClick={() => setStep(3)} disabled={selectedEmployees.length === 0}>
-                  Review Payroll
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                  Next <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             </CardContent>
@@ -319,145 +303,89 @@ export function PayrollRun() {
         </motion.div>
       )}
 
-      {/* Step 3: Review & Process */}
-      {step === 3 && !processed && (
+      {/* Step 3: Leave & Attendance */}
+      {step === 3 && (
         <motion.div variants={item}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Review Payroll Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Summary Stats */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div className="rounded-xl border border-border p-4">
-                  <p className="text-xs text-text-secondary">Total Gross</p>
-                  <p className="mt-1 text-sm font-bold text-text-primary">{formatCurrency(totalGross)}</p>
-                </div>
-                <div className="rounded-xl border border-border p-4">
-                  <p className="text-xs text-text-secondary">Total Deductions</p>
-                  <p className="mt-1 text-sm font-bold text-danger">{formatCurrency(totalDeductions)}</p>
-                </div>
-                <div className="rounded-xl border border-border p-4">
-                  <p className="text-xs text-text-secondary">Total Net Pay</p>
-                  <p className="mt-1 text-sm font-bold text-success">{formatCurrency(totalNet)}</p>
-                </div>
-              </div>
-
-              {/* Employee Breakdown */}
-              <div>
-                <h3 className="mb-3 font-medium text-text-primary">Employee Breakdown</h3>
-                <div className="rounded-xl border border-border overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border bg-background/50">
-                        <th className="px-4 py-3 text-left text-xs font-medium uppercase text-text-secondary">Employee</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium uppercase text-text-secondary">Gross</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium uppercase text-text-secondary">Deductions</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium uppercase text-text-secondary">Net</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {selectedEmployeeData.map((es) => {
-                        if (!es) return null
-                        const pf = Math.min(Math.round(es.grossSalary * 0.12), 1800)
-                        const esi = es.grossSalary <= 21000 ? Math.round(es.grossSalary * 0.0075 * 100) / 100 : 0
-                        const pt = 200
-                        const tds = Math.round(es.grossSalary * 0.1)
-                        const deductions = pf + esi + pt + tds
-                        return (
-                          <tr key={es.employeeId} className="hover:bg-background/50">
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-3">
-                                <Avatar
-                                  initials={`${es.employee.firstName[0]}${es.employee.lastName[0]}`}
-                                  size="sm"
-                                  color="#2563EB"
-                                />
-                                <span className="font-medium text-text-primary">
-                                  {es.employee.firstName} {es.employee.lastName}
-                                </span>
-                              </div>
-                            </td>
-                            <td className="px-4 py-3 text-right text-text-primary">{formatCurrency(es.grossSalary)}</td>
-                            <td className="px-4 py-3 text-right text-danger">{formatCurrency(deductions)}</td>
-                            <td className="px-4 py-3 text-right font-medium text-success">{formatCurrency(es.grossSalary - deductions)}</td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="flex justify-between">
-                <Button variant="outline" onClick={() => setStep(2)}>
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back
-                </Button>
-                <Button onClick={handleProcess} disabled={processing} size="lg">
-                  {processing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      <Calculator className="mr-2 h-4 w-4" />
-                      Process Payroll
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <StepLeaveAttendance
+            selectedEmployees={selectedEmployees}
+            month={selectedMonth}
+            year={selectedYear}
+            draftAttendance={attendance}
+            onUpdate={(a) => { setAttendance(a); markRecalcNeeded() }}
+            onBack={() => setStep(2)}
+            onNext={() => setStep(4)}
+          />
         </motion.div>
       )}
 
-      {/* Step 4: Complete */}
-      {step === 3 && processed && (
+      {/* Step 4: Joiners & Exits */}
+      {step === 4 && (
         <motion.div variants={item}>
-          <Card>
-            <CardContent className="p-8">
-              <div className="text-center">
-                <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-success-50 mb-6">
-                  <CheckCircle className="h-10 w-10 text-success" />
-                </div>
-                <h2 className="text-sm font-bold text-text-primary">Payroll Processed Successfully!</h2>
-                <p className="mt-2 text-text-secondary">
-                  {selectedEmployees.length} employees payroll has been processed for {monthNames[selectedMonth - 1]} {selectedYear}.
-                </p>
-                
-                <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-2xl mx-auto">
-                  <div className="rounded-xl bg-background p-4">
-                    <p className="text-xs text-text-secondary">Total Gross</p>
-                    <p className="text-sm font-bold text-text-primary">{formatCurrency(totalGross)}</p>
-                  </div>
-                  <div className="rounded-xl bg-background p-4">
-                    <p className="text-xs text-text-secondary">Total Deductions</p>
-                    <p className="text-sm font-bold text-danger">{formatCurrency(totalDeductions)}</p>
-                  </div>
-                  <div className="rounded-xl bg-background p-4">
-                    <p className="text-xs text-text-secondary">Total Net Pay</p>
-                    <p className="text-sm font-bold text-success">{formatCurrency(totalNet)}</p>
-                  </div>
-                </div>
+          <StepJoinerExit
+            selectedEmployees={selectedEmployees}
+            month={selectedMonth}
+            year={selectedYear}
+            draftJoiners={joiners}
+            draftExits={exits}
+            onUpdateJoiners={(j) => { setJoiners(j); markRecalcNeeded() }}
+            onUpdateExits={(e) => { setExits(e); markRecalcNeeded() }}
+            onBack={() => setStep(3)}
+            onNext={() => setStep(5)}
+          />
+        </motion.div>
+      )}
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                  <Button variant="outline" onClick={handleMarkPaid}>
-                    <Check className="mr-2 h-4 w-4" />
-                    Mark as Paid
-                  </Button>
-                  <Button onClick={() => navigate('/payroll/payslips')}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    View Payslips
-                  </Button>
-                  <Button variant="outline" onClick={() => navigate('/payroll')}>
-                    Back to Dashboard
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Step 5: Revisions & Arrears */}
+      {step === 5 && (
+        <motion.div variants={item}>
+          <StepRevisionArrear
+            selectedEmployees={selectedEmployees}
+            month={selectedMonth}
+            year={selectedYear}
+            draftArrears={arrears}
+            onUpdate={(a) => { setArrears(a); markRecalcNeeded() }}
+            onBack={() => setStep(4)}
+            onNext={() => setStep(6)}
+          />
+        </motion.div>
+      )}
+
+      {/* Step 6: Off-Cycle & Holds */}
+      {step === 6 && (
+        <motion.div variants={item}>
+          <StepOffCycleHolds
+            selectedEmployees={selectedEmployees}
+            month={selectedMonth}
+            year={selectedYear}
+            draftOffCycle={offCyclePayments}
+            draftHolds={holds}
+            onUpdateOffCycle={(o) => { setOffCyclePayments(o); markRecalcNeeded() }}
+            onUpdateHolds={(h) => { setHolds(h); markRecalcNeeded() }}
+            onBack={() => setStep(5)}
+            onNext={() => setStep(7)}
+          />
+        </motion.div>
+      )}
+
+      {/* Step 7: Final Review & Process */}
+      {step === 7 && (
+        <motion.div variants={item}>
+          <StepFinalReview
+            selectedEmployees={selectedEmployees}
+            month={selectedMonth}
+            year={selectedYear}
+            attendance={attendance}
+            joiners={joiners}
+            exits={exits}
+            arrears={arrears}
+            offCyclePayments={offCyclePayments}
+            holds={holds}
+            draftStatutoryOverrides={statutoryOverrides}
+            onUpdateStatutory={setStatutoryOverrides}
+            onBack={() => setStep(6)}
+            onRecalculate={handleRecalculate}
+            needsRecalculation={recalculationNeeded}
+          />
         </motion.div>
       )}
     </motion.div>

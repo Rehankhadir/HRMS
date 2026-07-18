@@ -8,6 +8,7 @@ import type {
   PayrollStatus,
   TaxSlab,
   TaxRegime,
+  PayrollDraft,
 } from '@/types'
 
 const STORAGE_KEYS = {
@@ -643,6 +644,47 @@ class PayrollStore {
   updateSettings(updates: Partial<PayrollSettings>) {
     this.settings = { ...this.settings, ...updates }
     saveToStorage(STORAGE_KEYS.SETTINGS, this.settings)
+  }
+
+  // ============================================
+  // DRAFT SERVICE — localStorage persistence
+  // This is a temporary local-only persistence layer.
+  // When a real backend is introduced, the localStorage
+  // read/write calls below are the single place that
+  // will need to be swapped for API calls.
+  // ============================================
+
+  private draftKey(month: number, year: number): string {
+    return `payroll_run_draft_${year}-${String(month).padStart(2, '0')}`
+  }
+
+  getDraft(month: number, year: number): PayrollDraft | null {
+    try {
+      const raw = localStorage.getItem(this.draftKey(month, year))
+      if (!raw) return null
+      const parsed = JSON.parse(raw)
+      if (parsed && parsed.periodKey && parsed.month === month && parsed.year === year) {
+        return parsed as PayrollDraft
+      }
+      return null
+    } catch {
+      return null
+    }
+  }
+
+  saveDraft(draft: PayrollDraft): void {
+    try {
+      draft.updatedAt = new Date().toISOString()
+      localStorage.setItem(this.draftKey(draft.month, draft.year), JSON.stringify(draft))
+    } catch {
+      console.error('Failed to save payroll draft')
+    }
+  }
+
+  clearDraft(month: number, year: number): void {
+    try {
+      localStorage.removeItem(this.draftKey(month, year))
+    } catch {}
   }
 
   calculateTax(annualIncome: number, regime: TaxRegime): number {

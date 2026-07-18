@@ -40,7 +40,7 @@ export const employees: Employee[] = [
     address: '123 Tech Street, San Francisco, CA 94102',
     reportingManagerId: '4',
     emergencyContact: { name: 'James Chen', phone: '+1 (555) 123-4568', relationship: 'Spouse' },
-    bankDetails: { accountName: 'Sarah Chen', accountNumber: '****1234', bankName: 'Chase', ifscCode: 'CHASUS6L' },
+    bankDetails: { accountName: 'Sarah Chen', accountNumber: '50100123456789', bankName: 'HDFC Bank', ifscCode: 'HDFC0001234' },
   },
   {
     id: '2',
@@ -58,7 +58,7 @@ export const employees: Employee[] = [
     address: '456 Creative Ave, San Francisco, CA 94103',
     reportingManagerId: '8',
     emergencyContact: { name: 'Maria Rivera', phone: '+1 (555) 234-5679', relationship: 'Sister' },
-    bankDetails: { accountName: 'Marcus Rivera', accountNumber: '****5678', bankName: 'Bank of America', ifscCode: 'BOFAUS6L' },
+    bankDetails: { accountName: 'Marcus Rivera', accountNumber: '60200987654321', bankName: 'ICICI Bank', ifscCode: 'ICIC0005678' },
   },
   {
     id: '3',
@@ -75,7 +75,7 @@ export const employees: Employee[] = [
     salary: 135000,
     address: '789 Growth Lane, San Francisco, CA 94105',
     emergencyContact: { name: 'Tom Johnson', phone: '+1 (555) 345-6790', relationship: 'Brother' },
-    bankDetails: { accountName: 'Emily Johnson', accountNumber: '****9012', bankName: 'Wells Fargo', ifscCode: 'WFBIUS6L' },
+    bankDetails: { accountName: 'Emily Johnson', accountNumber: '30100234567890', bankName: 'SBI', ifscCode: 'SBIN0003456' },
   },
   {
     id: '4',
@@ -93,7 +93,7 @@ export const employees: Employee[] = [
     address: '321 Revenue Road, San Francisco, CA 94107',
     reportingManagerId: '8',
     emergencyContact: { name: 'Jenny Park', phone: '+1 (555) 456-7891', relationship: 'Wife' },
-    bankDetails: { accountName: 'David Park', accountNumber: '****3456', bankName: 'Citibank', ifscCode: 'CITIUS6L' },
+    bankDetails: { accountName: 'David Park', accountNumber: '40100345678901', bankName: 'Axis Bank', ifscCode: 'UTIB0004567' },
   },
   {
     id: '5',
@@ -110,7 +110,7 @@ export const employees: Employee[] = [
     salary: 125000,
     address: '654 Culture Street, San Francisco, CA 94110',
     emergencyContact: { name: 'Mike Thompson', phone: '+1 (555) 567-8902', relationship: 'Husband' },
-    bankDetails: { accountName: 'Lisa Thompson', accountNumber: '****7890', bankName: 'Chase', ifscCode: 'CHASUS6L' },
+    bankDetails: { accountName: 'Lisa Thompson', accountNumber: '50100456789012', bankName: 'HDFC Bank', ifscCode: 'HDFC0007890' },
   },
   {
     id: '6',
@@ -128,7 +128,7 @@ export const employees: Employee[] = [
     address: '987 Code Avenue, San Francisco, CA 94114',
     reportingManagerId: '1',
     emergencyContact: { name: 'Grace Kim', phone: '+1 (555) 678-9013', relationship: 'Mother' },
-    bankDetails: { accountName: 'Alex Kim', accountNumber: '****2345', bankName: 'Bank of America', ifscCode: 'BOFAUS6L' },
+    bankDetails: { accountName: 'Alex Kim', accountNumber: '60200567890123', bankName: 'ICICI Bank', ifscCode: 'ICIC0002345' },
   },
   {
     id: '7',
@@ -146,7 +146,7 @@ export const employees: Employee[] = [
     address: '456 Art District, San Francisco, CA 94103',
     reportingManagerId: '2',
     emergencyContact: { name: 'Ross Green', phone: '+1 (555) 789-0124', relationship: 'Brother' },
-    bankDetails: { accountName: 'Rachel Green', accountNumber: '****6789', bankName: 'Wells Fargo', ifscCode: 'WFBIUS6L' },
+    bankDetails: { accountName: 'Rachel Green', accountNumber: '30100678901234', bankName: 'SBI', ifscCode: 'SBIN0006789' },
   },
   {
     id: '8',
@@ -164,7 +164,7 @@ export const employees: Employee[] = [
     address: '321 Money Street, San Francisco, CA 94105',
     reportingManagerId: undefined,
     emergencyContact: { name: 'Patricia Wilson', phone: '+1 (555) 890-1235', relationship: 'Wife' },
-    bankDetails: { accountName: 'James Wilson', accountNumber: '****0123', bankName: 'Citibank', ifscCode: 'CITIUS6L' },
+    bankDetails: { accountName: 'James Wilson', accountNumber: '40100789012345', bankName: 'Axis Bank', ifscCode: 'UTIB0000123' },
   },
   {
     id: '9',
@@ -182,7 +182,7 @@ export const employees: Employee[] = [
     address: '789 Content Lane, San Francisco, CA 94102',
     reportingManagerId: '4',
     emergencyContact: { name: 'Carlos Martinez', phone: '+1 (555) 901-2346', relationship: 'Father' },
-    bankDetails: { accountName: 'Sophia Martinez', accountNumber: '****4567', bankName: 'Chase', ifscCode: 'CHASUS6L' },
+    bankDetails: { accountName: 'Sophia Martinez', accountNumber: '50100890123456', bankName: 'HDFC Bank', ifscCode: 'HDFC0004567' },
   },
   {
     id: '10',
@@ -200,7 +200,7 @@ export const employees: Employee[] = [
     address: '654 Ops Center, San Francisco, CA 94110',
     reportingManagerId: '4',
     emergencyContact: { name: 'Jennifer Brown', phone: '+1 (555) 012-3457', relationship: 'Wife' },
-    bankDetails: { accountName: 'Michael Brown', accountNumber: '****8901', bankName: 'Bank of America', ifscCode: 'BOFAUS6L' },
+    bankDetails: { accountName: 'Michael Brown', accountNumber: '60200901234567', bankName: 'ICICI Bank', ifscCode: 'ICIC0008901' },
   },
   {
     id: '11',
@@ -218,7 +218,7 @@ export const employees: Employee[] = [
     address: '123 Silicon Ave, San Francisco, CA 94102',
     reportingManagerId: '1',
     emergencyContact: { name: 'Raj Sharma', phone: '+1 (555) 111-2234', relationship: 'Father' },
-    bankDetails: { accountName: 'Priya Sharma', accountNumber: '****1122', bankName: 'Chase', ifscCode: 'CHASUS6L' },
+    bankDetails: { accountName: 'Priya Sharma', accountNumber: '30100111223344', bankName: 'SBI', ifscCode: 'SBIN0001122' },
   },
   {
     id: '12',
@@ -236,7 +236,7 @@ export const employees: Employee[] = [
     address: '456 Media Blvd, San Francisco, CA 94103',
     reportingManagerId: '3',
     emergencyContact: { name: 'Zendaya Holland', phone: '+1 (555) 222-3345', relationship: 'Sister' },
-    bankDetails: { accountName: 'Tom Holland', accountNumber: '****3344', bankName: 'Wells Fargo', ifscCode: 'WFBIUS6L' },
+    bankDetails: { accountName: 'Tom Holland', accountNumber: '40100222334455', bankName: 'Axis Bank', ifscCode: 'UTIB0003344' },
   },
 ]
 

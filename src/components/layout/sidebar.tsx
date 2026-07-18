@@ -88,15 +88,15 @@ const adminNavigation: NavGroup[] = [
   {
     label: 'Payroll',
     items: [
-      { name: 'Payroll Dashboard', href: '/payroll', icon: DollarSign },
       { name: 'Salary Assignment', href: '/payroll/salary-assignment', icon: Wallet },
       { name: 'Salary Revisions', href: '/payroll/revisions', icon: TrendingUp },
       { name: 'Arrears', href: '/payroll/arrears', icon: AlertTriangle },
+      { name: 'Salary Holds', href: '/payroll/holds', icon: AlertTriangle },
+      { name: 'Off-Cycle Payouts', href: '/payroll/off-cycle', icon: PiggyBank },
       { name: 'Payroll Run', href: '/payroll/run', icon: ClipboardList },
       { name: 'Payslips', href: '/payroll/payslips', icon: Receipt },
       { name: 'Payroll History', href: '/payroll/history', icon: ScrollText },
-      { name: 'Off-Cycle Payouts', href: '/payroll/off-cycle', icon: PiggyBank },
-      { name: 'Salary Holds', href: '/payroll/holds', icon: AlertTriangle },
+      { name: 'Payroll Dashboard', href: '/payroll', icon: DollarSign },
     ],
   },
   {

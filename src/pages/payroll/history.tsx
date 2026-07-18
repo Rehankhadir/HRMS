@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { payrollStore } from '@/lib/payroll-store'
 import { useToast } from '@/components/ui/toast'
+import { generateBulkUploadCSV, downloadCSV } from '@/lib/csv-export'
 import {
   ArrowLeft,
   Clock,
@@ -98,6 +99,22 @@ export function PayrollHistory() {
     a.click()
     URL.revokeObjectURL(url)
     toast('Payroll history exported!', 'success')
+  }
+
+  const handleExportBulkUpload = (run: typeof runs[0]) => {
+    const period = payrollStore.getPeriod(run.periodId)
+    if (!period) return
+
+    const payslips = payrollStore.getPayslips(run.periodId)
+    const rows = payslips.map(p => ({
+      employeeId: p.employeeId,
+      netPay: p.netSalary,
+    }))
+
+    const csv = generateBulkUploadCSV(rows, period.month, period.year)
+    const filename = `salary-bulk-upload-${period.year}-${String(period.month).padStart(2, '0')}.csv`
+    downloadCSV(csv, filename)
+    toast(`CSV exported for ${monthNames[period.month - 1]} ${period.year}`, 'success')
   }
 
   return (
@@ -253,6 +270,15 @@ export function PayrollHistory() {
                         <Badge variant={config.color} className="w-20 justify-center">
                           {config.label}
                         </Badge>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => { e.stopPropagation(); handleExportBulkUpload(run) }}
+                          className="shrink-0"
+                        >
+                          <Download className="mr-1 h-3 w-3" />
+                          CSV
+                        </Button>
                       </div>
                     </div>
                   )
