@@ -10,11 +10,12 @@ import { payrollStore } from '@/lib/payroll-store'
 import { employees } from '@/data/mock'
 import { useAuth } from '@/contexts/auth-context'
 import { useToast } from '@/components/ui/toast'
+import { generatePayslipPDF } from '@/lib/pdf-export'
+import type { Payslip } from '@/types'
 import {
   ArrowLeft,
   Download,
   Eye,
-  Printer,
   Search,
   FileText,
   Calendar,
@@ -38,28 +39,27 @@ export function Payslips() {
   const { user } = useAuth()
   const [selectedPeriod, setSelectedPeriod] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewingPayslip, setViewingPayslip] = useState<any>(null)
+  const [viewingPayslip, setViewingPayslip] = useState<Payslip | null>(null)
 
   const isEmployee = user?.role === 'employee'
   const employeeId = user?.employeeId
 
   const periods = payrollStore.getPeriods()
-  
-  // For employees, filter by their employeeId directly
-  const payslips = isEmployee && employeeId 
+
+  const payslips = isEmployee && employeeId
     ? payrollStore.getPayslips(selectedPeriod !== 'all' ? selectedPeriod : undefined, employeeId)
     : payrollStore.getPayslips(selectedPeriod !== 'all' ? selectedPeriod : undefined)
 
-  const filteredPayslips = isEmployee 
-    ? payslips // Already filtered by employeeId above
+  const filteredPayslips = isEmployee
+    ? payslips
     : payslips.filter(payslip => {
         const emp = employees.find(e => e.id === payslip.employeeId)
         if (!emp) return false
-        const matchesSearch = 
+        return (
           emp.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           emp.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
           emp.email.toLowerCase().includes(searchQuery.toLowerCase())
-        return matchesSearch
+        )
       })
 
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -72,160 +72,24 @@ export function Payslips() {
     }).format(amount)
   }
 
-  const handleDownload = (payslip: any) => {
-    const emp = employees.find(e => e.id === payslip.employeeId)
-    if (!emp) return
-
-    const payslipContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Payslip - ${emp.firstName} ${emp.lastName}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1a1a1a; }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #2563EB; padding-bottom: 20px; margin-bottom: 30px; }
-    .company-info h1 { font-size: 24px; color: #2563EB; }
-    .company-info p { color: #64748b; font-size: 14px; }
-    .payslip-title { text-align: right; }
-    .payslip-title h2 { font-size: 20px; color: #1a1a1a; }
-    .payslip-title p { color: #64748b; font-size: 14px; }
-    .employee-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; padding: 20px; background: #f8fafc; border-radius: 12px; }
-    .info-group label { font-size: 12px; color: #64748b; text-transform: uppercase; }
-    .info-group p { font-size: 14px; font-weight: 500; color: #1a1a1a; }
-    .section { margin-bottom: 30px; }
-    .section-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 12px; background: #f8fafc; font-size: 12px; text-transform: uppercase; color: #64748b; }
-    th:last-child, td:last-child { text-align: right; }
-    td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-    .total-row { font-weight: 600; background: #f8fafc; }
-    .earnings { color: #22c55e; }
-    .deductions { color: #ef4444; }
-    .net-pay { display: flex; justify-content: space-between; padding: 20px; background: linear-gradient(135deg, #2563EB, #1d4ed8); color: white; border-radius: 12px; margin-top: 30px; }
-    .net-pay h3 { font-size: 18px; }
-    .net-pay .amount { font-size: 24px; font-weight: 700; }
-    .footer { margin-top: 40px; text-align: center; color: #94a3b8; font-size: 12px; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <div class="company-info">
-      <h1>Zenith</h1>
-      <p>123 Business Street, San Francisco, CA 94102</p>
-      <p>info@acme.com | +1 (555) 123-4567</p>
-    </div>
-    <div class="payslip-title">
-      <h2>Salary Payslip</h2>
-      <p>${monthNames[payslip.month - 1]} ${payslip.year}</p>
-    </div>
-  </div>
-
-  <div class="employee-info">
-    <div class="info-group">
-      <label>Employee Name</label>
-      <p>${emp.firstName} ${emp.lastName}</p>
-    </div>
-    <div class="info-group">
-      <label>Employee ID</label>
-      <p>${emp.id.toUpperCase()}</p>
-    </div>
-    <div class="info-group">
-      <label>Department</label>
-      <p>${emp.department}</p>
-    </div>
-    <div class="info-group">
-      <label>Designation</label>
-      <p>${emp.designation}</p>
-    </div>
-    <div class="info-group">
-      <label>Working Days</label>
-      <p>${payslip.workingDays}</p>
-    </div>
-    <div class="info-group">
-      <label>Days Present</label>
-      <p>${payslip.daysPresent}</p>
-    </div>
-  </div>
-
-  <div class="section">
-    <h3 class="section-title">Earnings</h3>
-    <table>
-      <thead>
-        <tr><th>Component</th><th>Amount</th></tr>
-      </thead>
-      <tbody>
-        ${payslip.earnings.map((e: any) => `
-          <tr><td>${e.name}</td><td class="earnings">${formatCurrency(e.amount)}</td></tr>
-        `).join('')}
-        <tr class="total-row"><td>Total Earnings</td><td class="earnings">${formatCurrency(payslip.grossSalary)}</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="section">
-    <h3 class="section-title">Deductions</h3>
-    <table>
-      <thead>
-        <tr><th>Component</th><th>Amount</th></tr>
-      </thead>
-      <tbody>
-        ${payslip.deductions.map((d: any) => `
-          <tr><td>${d.name}</td><td class="deductions">${formatCurrency(d.amount)}</td></tr>
-        `).join('')}
-        <tr class="total-row"><td>Total Deductions</td><td class="deductions">${formatCurrency(payslip.totalDeductions)}</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="net-pay">
-    <h3>Net Pay</h3>
-    <div class="amount">${formatCurrency(payslip.netSalary)}</div>
-  </div>
-
-  <div class="footer">
-    <p>This is a computer-generated payslip and does not require a signature.</p>
-    <p>Generated on ${new Date(payslip.generatedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-  </div>
-</body>
-</html>
-    `
-
-    const blob = new Blob([payslipContent], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `payslip-${emp.firstName}-${emp.lastName}-${monthNames[payslip.month - 1]}-${payslip.year}.html`
-    a.click()
-    URL.revokeObjectURL(url)
-    toast('Payslip downloaded successfully!', 'success')
-  }
-
-  const handlePrint = (payslip: any) => {
-    const emp = employees.find(e => e.id === payslip.employeeId)
-    if (!emp) return
-    
-    const printWindow = window.open('', '_blank')
-    if (printWindow) {
-      printWindow.document.write(`
-        <html>
-          <head><title>Payslip - ${emp.firstName} ${emp.lastName}</title></head>
-          <body>
-            <h1>Payslip for ${emp.firstName} ${emp.lastName}</h1>
-            <p>Month: ${monthNames[payslip.month - 1]} ${payslip.year}</p>
-            <p>Gross: ${formatCurrency(payslip.grossSalary)}</p>
-            <p>Deductions: ${formatCurrency(payslip.totalDeductions)}</p>
-            <p>Net: ${formatCurrency(payslip.netSalary)}</p>
-          </body>
-        </html>
-      `)
-      printWindow.document.close()
-      printWindow.print()
+  const handleDownloadPDF = (payslip: Payslip) => {
+    try {
+      generatePayslipPDF(payslip, 'download')
+      toast('Payslip PDF downloaded successfully!', 'success')
+    } catch {
+      toast('Failed to generate PDF. Please try again.', 'error')
     }
   }
 
-  const currentEmp = isEmployee && employeeId 
+  const handleViewPDF = (payslip: Payslip) => {
+    try {
+      generatePayslipPDF(payslip, 'view')
+    } catch {
+      toast('Failed to generate PDF. Please try again.', 'error')
+    }
+  }
+
+  const currentEmp = isEmployee && employeeId
     ? employees.find(e => e.id === employeeId)
     : null
 
@@ -238,9 +102,9 @@ export function Payslips() {
     >
       {/* Back Button */}
       <motion.div variants={item}>
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate(isEmployee ? '/' : '/payroll')} 
+        <Button
+          variant="ghost"
+          onClick={() => navigate(isEmployee ? '/' : '/payroll')}
           className="gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -255,7 +119,7 @@ export function Payslips() {
             {isEmployee ? 'My Payslips' : 'Payslips'}
           </h1>
           <p className="mt-1 text-text-secondary">
-            {isEmployee 
+            {isEmployee
               ? 'View and download your salary payslips.'
               : 'View and download employee payslips.'
             }
@@ -266,7 +130,7 @@ export function Payslips() {
             <Avatar
               initials={`${currentEmp.firstName[0]}${currentEmp.lastName[0]}`}
               size="lg"
-              color="#2563EB"
+              color="#4F46E5"
             />
             <div>
               <p className="font-semibold text-text-primary">{currentEmp.firstName} {currentEmp.lastName}</p>
@@ -301,7 +165,7 @@ export function Payslips() {
                 <div>
                   <p className="text-xs text-text-secondary">Latest Pay Period</p>
                   <p className="text-sm font-bold text-text-primary">
-                    {filteredPayslips.length > 0 
+                    {filteredPayslips.length > 0
                       ? `${monthNames[filteredPayslips[0].month - 1]} ${filteredPayslips[0].year}`
                       : 'N/A'
                     }
@@ -319,7 +183,7 @@ export function Payslips() {
                 <div>
                   <p className="text-xs text-text-secondary">Latest Net Pay</p>
                   <p className="text-sm font-bold text-success">
-                    {filteredPayslips.length > 0 
+                    {filteredPayslips.length > 0
                       ? formatCurrency(filteredPayslips[0].netSalary)
                       : 'N/A'
                     }
@@ -375,7 +239,7 @@ export function Payslips() {
                           <Avatar
                             initials={`${emp.firstName[0]}${emp.lastName[0]}`}
                             size="lg"
-                            color="#2563EB"
+                            color="#4F46E5"
                           />
                         )}
                         <div>
@@ -414,22 +278,25 @@ export function Payslips() {
                             variant="outline"
                             size="icon"
                             onClick={() => setViewingPayslip(payslip)}
+                            title="Preview payslip"
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleDownload(payslip)}
+                            onClick={() => handleViewPDF(payslip)}
+                            title="View PDF"
                           >
-                            <Download className="h-4 w-4" />
+                            <FileText className="h-4 w-4" />
                           </Button>
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handlePrint(payslip)}
+                            onClick={() => handleDownloadPDF(payslip)}
+                            title="Download PDF"
                           >
-                            <Printer className="h-4 w-4" />
+                            <Download className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
@@ -446,7 +313,7 @@ export function Payslips() {
                 <FileText className="mx-auto h-12 w-12 text-text-secondary" />
                 <h3 className="mt-4 text-xs font-medium text-text-primary">No payslips found</h3>
                 <p className="mt-2 text-text-secondary">
-                  {isEmployee 
+                  {isEmployee
                     ? 'No payslips have been generated for your account yet.'
                     : (searchQuery ? 'Try a different search term.' : 'Process payroll to generate payslips.')
                   }
@@ -475,7 +342,7 @@ export function Payslips() {
                     <div>
                       <div className="flex items-center gap-3 mb-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white font-bold">
-                          A
+                          Z
                         </div>
                         <div>
                           <h2 className="text-sm font-bold text-text-primary">Zenith</h2>
@@ -528,7 +395,7 @@ export function Payslips() {
                         Earnings
                       </h4>
                       <div className="space-y-2">
-                        {viewingPayslip.earnings.map((e: any, i: number) => (
+                        {viewingPayslip.earnings.map((e, i) => (
                           <div key={i} className="flex justify-between text-xs">
                             <span className="text-text-secondary">{e.name}</span>
                             <span className="font-medium text-success">{formatCurrency(e.amount)}</span>
@@ -548,7 +415,7 @@ export function Payslips() {
                         Deductions
                       </h4>
                       <div className="space-y-2">
-                        {viewingPayslip.deductions.map((d: any, i: number) => (
+                        {viewingPayslip.deductions.map((d, i) => (
                           <div key={i} className="flex justify-between text-xs">
                             <span className="text-text-secondary">{d.name}</span>
                             <span className="font-medium text-danger">{formatCurrency(d.amount)}</span>
@@ -575,9 +442,24 @@ export function Payslips() {
                     <Button variant="outline" onClick={() => setViewingPayslip(null)}>
                       Close
                     </Button>
-                    <Button onClick={() => handleDownload(viewingPayslip)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const p = viewingPayslip
+                        setViewingPayslip(null)
+                        handleViewPDF(p)
+                      }}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      View PDF
+                    </Button>
+                    <Button onClick={() => {
+                      const p = viewingPayslip
+                      setViewingPayslip(null)
+                      handleDownloadPDF(p)
+                    }}>
                       <Download className="mr-2 h-4 w-4" />
-                      Download
+                      Download PDF
                     </Button>
                   </div>
                 </div>
