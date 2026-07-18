@@ -1,3 +1,4 @@
+import { employees } from '@/data/mock'
 import type {
   SalaryStructure,
   EmployeeSalary,
@@ -676,12 +677,16 @@ class PayrollStore {
       const totalEarned = earnedGross + arrearAmount + offCycleAmount
 
       // --- Statutory deductions (on earned salary, not full gross) ---
-      const pf = Math.min(Math.round(earnedGross * 0.12), 1800)
-      const esi = earnedGross <= 21000 ? Math.round(earnedGross * 0.0075 * 100) / 100 : 0
-      const pt = calculatePT(earnedGross, this.settings.professionalTax.slabs)
+      const emp = employees.find(e => e.id === es.employeeId)
+      const prefs = emp?.statutoryPreferences
+
+      const pf = prefs?.pfEnabled ? Math.min(Math.round(earnedGross * 0.12), 1800) : 0
+      const esi = prefs?.esiEnabled && earnedGross <= 21000 ? Math.round(earnedGross * 0.0075 * 100) / 100 : 0
+      const pt = prefs?.ptEnabled ? calculatePT(earnedGross, this.settings.professionalTax.slabs) : 0
+      const lwf = prefs?.lwfEnabled ? 2 : 0
       const tds = Math.round(earnedGross * 0.1)
 
-      const totalDeductions = pf + esi + pt + tds
+      const totalDeductions = pf + esi + pt + lwf + tds
       const netPay = totalEarned - totalDeductions
 
       // --- Build payslip ---
@@ -703,6 +708,7 @@ class PayrollStore {
         { name: 'PF', type: 'deduction' as const, amount: pf },
         { name: 'ESI', type: 'deduction' as const, amount: esi },
         { name: 'Professional Tax', type: 'deduction' as const, amount: pt },
+        { name: 'LWF', type: 'deduction' as const, amount: lwf },
         { name: 'TDS', type: 'deduction' as const, amount: tds },
       ]
 

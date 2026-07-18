@@ -16,6 +16,7 @@ import {
   DollarSign,
   FileText,
   Eye,
+  Shield,
 } from 'lucide-react'
 
 const container = {
@@ -51,9 +52,13 @@ export function AddEmployee() {
     designation: '',
     joiningDate: '',
     salary: '',
+    pfEnabled: true,
+    esiEnabled: true,
+    ptEnabled: true,
+    lwfEnabled: false,
   })
 
-  const updateFormData = (field: string, value: string) => {
+  const updateFormData = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -193,6 +198,50 @@ export function AddEmployee() {
                 onChange={(e) => updateFormData('salary', e.target.value)}
               />
             </div>
+
+            <div className="rounded-lg border border-border p-4 space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
+                <Label className="text-xs font-semibold text-text-primary">Statutory Compliance</Label>
+              </div>
+              <p className="text-xs text-text-secondary">Select which statutory deductions apply to this employee.</p>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {[
+                  { key: 'pfEnabled', label: 'Provident Fund (PF)', desc: 'Employee & employer contribution' },
+                  { key: 'esiEnabled', label: 'ESI', desc: 'Employee State Insurance (if salary ≤ ₹21,000)' },
+                  { key: 'ptEnabled', label: 'Professional Tax', desc: 'State-level tax on profession' },
+                  { key: 'lwfEnabled', label: 'LWF', desc: 'Labour Welfare Fund' },
+                ].map((toggle) => (
+                  <div
+                    key={toggle.key}
+                    className={`flex items-center justify-between rounded-lg border p-3 transition-colors ${
+                      formData[toggle.key as keyof typeof formData]
+                        ? 'border-success bg-success-50'
+                        : 'border-border bg-background/50'
+                    }`}
+                  >
+                    <div>
+                      <p className="text-xs font-medium text-text-primary">{toggle.label}</p>
+                      <p className="text-[10px] text-text-secondary">{toggle.desc}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => updateFormData(toggle.key, !formData[toggle.key as keyof typeof formData])}
+                      className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors ${
+                        formData[toggle.key as keyof typeof formData] ? 'bg-success' : 'bg-border'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                          formData[toggle.key as keyof typeof formData] ? 'translate-x-4' : 'translate-x-0.5'
+                        } mt-0.5`}
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )
       case 4:
@@ -227,6 +276,19 @@ export function AddEmployee() {
                   <p className="mt-1 text-xs font-medium">{field.value}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="rounded-lg border border-border p-4">
+              <p className="text-xs font-semibold text-text-primary mb-3">Statutory Compliance</p>
+              <div className="flex flex-wrap gap-2">
+                {formData.pfEnabled && <span className="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-[10px] font-medium text-success">PF</span>}
+                {formData.esiEnabled && <span className="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-[10px] font-medium text-success">ESI</span>}
+                {formData.ptEnabled && <span className="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-[10px] font-medium text-success">PT</span>}
+                {formData.lwfEnabled && <span className="inline-flex items-center rounded-full bg-success-50 px-2.5 py-0.5 text-[10px] font-medium text-success">LWF</span>}
+                {!formData.pfEnabled && !formData.esiEnabled && !formData.ptEnabled && !formData.lwfEnabled && (
+                  <span className="text-xs text-text-secondary">No statutory deductions enabled</span>
+                )}
+              </div>
             </div>
           </div>
         )

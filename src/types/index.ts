@@ -28,6 +28,13 @@ export type RevisionType = 'annual' | 'promotion' | 'adjustment' | 'correction'
 
 export type AuditAction = 'create' | 'update' | 'delete' | 'approve' | 'reject' | 'process' | 'export'
 
+export interface StatutoryPreferences {
+  pfEnabled: boolean
+  esiEnabled: boolean
+  ptEnabled: boolean
+  lwfEnabled: boolean
+}
+
 export interface Employee {
   id: string
   firstName: string
@@ -44,6 +51,7 @@ export interface Employee {
   salary: number
   address: string
   reportingManagerId?: string
+  statutoryPreferences: StatutoryPreferences
   emergencyContact: {
     name: string
     phone: string
